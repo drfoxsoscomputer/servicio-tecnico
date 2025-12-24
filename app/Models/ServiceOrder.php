@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ServiceOrder extends Model
@@ -25,4 +27,24 @@ class ServiceOrder extends Model
         'receibed_at',
         'delivered_at',
     ];
+
+    public function device(): BelongsTo
+    {
+        return $this->belongsTo(Device::class);
+    }
+
+    public function technician(): BelongsTo
+    {
+        return $this->belongsTo(Technician::class);
+    }
+
+    public function items(): HasMany
+    {
+        return $this->hasMany(ServiceOrderItem::class);
+    }
+
+    public function photos(): HasMany
+    {
+        return $this->hasMany(ServiceOrderPhoto::class);
+    }
 }

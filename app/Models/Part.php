@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Part extends Model
@@ -17,4 +18,9 @@ class Part extends Model
         'cost_price',
         'sale_price',
     ];
+
+    public function serviceOrderItem(): HasMany
+    {
+        return $this->hasMany(ServiceOrderItem::class);
+    }
 }
