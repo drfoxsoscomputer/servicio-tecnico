@@ -34,17 +34,17 @@ class ClientsTable
                     ->searchable(),
                 TextColumn::make('created_at')
                     ->label('Creado')
-                    ->dateTime('d/m/Y H:i')
+                    ->dateTime('d/m/Y h:i a')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('deleted_at')
                     ->label('Eliminado')
-                    ->dateTime('d/m/Y H:i')
+                    ->dateTime('d/m/Y h:i a')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
                     ->label('Actualizado')
-                    ->dateTime('d/m/Y H:i')
+                    ->dateTime('d/m/Y h:i a')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
