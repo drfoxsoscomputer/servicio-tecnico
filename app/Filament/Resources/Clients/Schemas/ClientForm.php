@@ -15,9 +15,10 @@ class ClientForm
             ->components([
                 TextInput::make('name')
                     ->label('Nombre del Cliente / Empresa')
-                    ->required()
-                    ->maxLength(150)
                     ->live(onBlur: true)
+                    ->required()
+                    ->minValue(3)
+                    ->maxValue(150)
                     ->afterStateUpdated(function ($state, callable $set) {
                         if (! $state) {
                             return;
@@ -44,6 +45,7 @@ class ClientForm
                 TextInput::make('document_id')
                     ->label('Cédula / RIF')
                     ->placeholder('Ej: V-12345678 o J-12345678-9 o G-12345678-9')
+                    ->minLength(9)
                     ->maxLength(50)
                     ->live(onBlur: true)
                     ->afterStateUpdated(function ($state, callable $set) {
@@ -97,7 +99,8 @@ class ClientForm
 
                 TextInput::make('phone')
                     ->label('Teléfono')
-                    ->placeholder('Ej: 0412-1234567 o +58 412-1234567')
+                    ->placeholder('Ej: 04141234567 o +584141234567')
+                    ->minLength(13)
                     ->maxLength(20)
                     ->tel()
                     ->live(onBlur: true)
