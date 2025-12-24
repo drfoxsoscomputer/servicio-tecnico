@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('parts', function (Blueprint $table) {
             $table->id();
+            $table->string('name', 150);
+            $table->string('sku', 100)->nullable();
+            $table->integer('stock');
+            $table->decimal('cost_price', 10, 2);
+            $table->decimal('sale_price', 10, 2);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

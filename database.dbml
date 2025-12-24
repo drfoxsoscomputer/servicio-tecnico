@@ -1,82 +1,89 @@
 Table clients {
-  id          int [pk, increment]
-  name        varchar(150) [note: 'Nombre del cliente']
-  email       varchar(150) [null, note: 'Correo del cliente']
-  phone       varchar(50)  [null, note: 'Telefono de contacto']
-  document_id varchar(50)  [null, note: 'Cedula o RIF']
-  address     text         [null, note: 'Direccion del cliente']
-  created_at  datetime
-  updated_at  datetime
+  id int [pk, increment]
+  name varchar(150) [note: 'Nombre del cliente']
+  email varchar(150) [null, note: 'Correo del cliente']
+  phone varchar(50) [null, note: 'Telefono de contacto']
+  document_id varchar(50) [null, note: 'Cedula o RIF']
+  address text [null, note: 'Direccion del cliente']
+  deleted_at datetime [null, note: 'Soft delete: cliente marcado como eliminado']
+  created_at datetime
+  updated_at datetime
 }
 
 Table devices {
-  id              int [pk, increment]
-  client_id       int [note: 'Cliente duenio del equipo']
-  name            varchar(150) [note: 'Nombre identificador del equipo']
-  type            varchar(50)  [note: 'pc, laptop, impresora, etc.']
-  brand           varchar(100) [null, note: 'Marca del equipo']
-  model           varchar(100) [null, note: 'Modelo del equipo']
-  serial          varchar(100) [null, note: 'Numero de serie']
+  id int [pk, increment]
+  client_id int [note: 'Cliente duenio del equipo']
+  name varchar(150) [note: 'Nombre identificador del equipo']
+  type varchar(50) [note: 'pc, laptop, impresora, etc.']
+  brand varchar(100) [null, note: 'Marca del equipo']
+  model varchar(100) [null, note: 'Modelo del equipo']
+  serial varchar(100) [null, note: 'Numero de serie']
   access_password varchar(150) [null, note: 'Contrasena de acceso del equipo']
-  notes           text         [null, note: 'Notas del estado del equipo']
-  created_at      datetime
-  updated_at      datetime
+  notes text [null, note: 'Notas del estado del equipo']
+  deleted_at datetime [null, note: 'Soft delete: equipo marcado como eliminado']
+  created_at datetime
+  updated_at datetime
 }
 
 Table technicians {
-  id         int [pk, increment]
-  name       varchar(150) [note: 'Nombre del tecnico']
-  email      varchar(150) [null, note: 'Correo del tecnico']
-  phone      varchar(50)  [null, note: 'Telefono del tecnico']
+  id int [pk, increment]
+  name varchar(150) [note: 'Nombre del tecnico']
+  email varchar(150) [null, note: 'Correo del tecnico']
+  phone varchar(50) [null, note: 'Telefono del tecnico']
+  deleted_at datetime [null, note: 'Soft delete: tecnico marcado como eliminado']
   created_at datetime
   updated_at datetime
 }
 
 Table service_orders {
-  id               int [pk, increment]
-  device_id        int [note: 'Equipo asociado a la orden']
-  technician_id    int [null, note: 'Tecnico asignado']
-  status           varchar(30) [note: 'Estado de la orden']
+  id int [pk, increment]
+  device_id int [note: 'Equipo asociado a la orden']
+  technician_id int [null, note: 'Tecnico asignado']
+  received_by_user_id int [null, note: 'Usuario que recibio el equipo']
+  closed_by_user_id int [null, note: 'Usuario que cerró/entrego la orden']
+  status varchar(30) [note: 'Estado de la orden']
   problem_reported text [note: 'Problema reportado por el cliente']
-  diagnosis        text [null, note: 'Diagnostico del tecnico']
-  work_done        text [null, note: 'Trabajo realizado']
-  estimated_cost   decimal(10,2) [null, note: 'Costo estimado']
-  total_cost       decimal(10,2) [null, note: 'Costo final']
-  priority         varchar(20) [null, note: 'Prioridad: low, normal, high, urgent']
-  received_at      datetime [note: 'Fecha de recepcion del equipo']
-  delivered_at     datetime [null, note: 'Fecha de entrega al cliente']
-  created_at       datetime
-  updated_at       datetime
+  diagnosis text [null, note: 'Diagnostico del tecnico']
+  work_done text [null, note: 'Trabajo realizado']
+  estimated_cost decimal(10,2) [null, note: 'Costo estimado']
+  total_cost decimal(10,2) [null, note: 'Costo final']
+  priority varchar(20) [null, note: 'Prioridad: low, normal, high, urgent']
+  received_at datetime [note: 'Fecha de recepcion del equipo']
+  delivered_at datetime [null, note: 'Fecha de entrega al cliente']
+  deleted_at datetime [null, note: 'Soft delete: orden marcada como eliminada']
+  created_at datetime
+  updated_at datetime
 }
 
 Table parts {
-  id          int [pk, increment]
-  name        varchar(150) [note: 'Nombre de la pieza o material']
-  sku         varchar(100) [null, note: 'Codigo interno o SKU']
-  stock       int [note: 'Cantidad en inventario']
-  cost_price  decimal(10,2) [note: 'Costo de compra']
-  sale_price  decimal(10,2) [note: 'Precio de venta por unidad']
-  created_at  datetime
-  updated_at  datetime
+  id int [pk, increment]
+  name varchar(150) [note: 'Nombre de la pieza o material']
+  sku varchar(100) [null, note: 'Codigo interno o SKU']
+  stock int [note: 'Cantidad en inventario']
+  cost_price decimal(10,2) [note: 'Costo de compra']
+  sale_price decimal(10,2) [note: 'Precio de venta por unidad']
+  deleted_at datetime [null, note: 'Soft delete: pieza/material marcado como eliminado']
+  created_at datetime
+  updated_at datetime
 }
 
 Table service_order_items {
-  id               int [pk, increment]
+  id int [pk, increment]
   service_order_id int [note: 'Orden de servicio']
-  part_id          int [note: 'Pieza usada']
-  quantity         int [note: 'Cantidad usada']
-  unit_price       decimal(10,2) [note: 'Precio de venta unitario en la orden']
-  created_at       datetime
-  updated_at       datetime
+  part_id int [note: 'Pieza usada']
+  quantity int [note: 'Cantidad usada']
+  unit_price decimal(10,2) [note: 'Precio de venta unitario en la orden']
+  created_at datetime
+  updated_at datetime
 }
 
 Table service_order_photos {
-  id               int [pk, increment]
+  id int [pk, increment]
   service_order_id int [note: 'Orden de servicio relacionada']
-  type             varchar(20) [note: 'before o after']
-  path             varchar(255) [note: 'Ruta del archivo de imagen']
-  created_at       datetime
-  updated_at       datetime
+  type varchar(20) [note: 'before o after']
+  path varchar(255) [note: 'Ruta del archivo de imagen']
+  created_at datetime
+  updated_at datetime
 }
 
 Ref: devices.client_id > clients.id
