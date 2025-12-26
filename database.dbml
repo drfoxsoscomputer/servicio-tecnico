@@ -47,7 +47,6 @@ Table service_orders {
   work_done text [null, note: 'Trabajo realizado']
   estimated_cost decimal(10,2) [null, note: 'Costo estimado']
   total_cost decimal(10,2) [null, note: 'Costo final']
-  priority varchar(20) [null, note: 'Prioridad: low, normal, high, urgent']
   received_at datetime [note: 'Fecha de recepcion del equipo']
   delivered_at datetime [null, note: 'Fecha de entrega al cliente']
   deleted_at datetime [null, note: 'Soft delete: orden marcada como eliminada']
