@@ -137,6 +137,7 @@ class ClientForm
                     ->rows(3)
                     ->default(null)
                     ->columnSpanFull(),
-            ]);
+            ])
+            ->columns(2);
     }
 }
