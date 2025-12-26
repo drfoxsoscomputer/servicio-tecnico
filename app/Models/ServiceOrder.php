@@ -23,7 +23,6 @@ class ServiceOrder extends Model
         'work_done',
         'estimated_cost',
         'total_cost',
-        'priority',
         'receibed_at',
         'delivered_at',
     ];
