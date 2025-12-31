@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ServiceOrders\Schemas;
 
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -34,7 +35,7 @@ class ServiceOrderForm
                     ->label('Cerrado por:')
                     ->numeric()
                     ->default(null),
-                Select::make('status')
+                Radio::make('status')
                     ->label('Estado')
                     ->options([
                         'received' => 'Recibido',
@@ -43,6 +44,9 @@ class ServiceOrderForm
                         'repaired' => 'Reparado',
                         'delivered' => 'Entregado',
                     ])
+                    ->default('received')
+                    ->inline()
+                    ->columnSpanFull()
                     ->required(),
                 Textarea::make('problem_reported')
                     ->label('Problema reportado')
@@ -69,10 +73,13 @@ class ServiceOrderForm
                 DateTimePicker::make('received_at')
                     ->label('Fecha de recepción')
                     ->displayFormat('d/m/Y h:i a')
+                    ->seconds(false)
+                    ->closeOnDateSelection()
                     ->required(),
-                DateTimePicker::make('delivered_at')
+                    DateTimePicker::make('delivered_at')
                     ->label('Fecha de entrega')
                     ->displayFormat('d/m/Y h:i a')
+                    ->seconds(false)
                     ->default(null),
             ]);
     }

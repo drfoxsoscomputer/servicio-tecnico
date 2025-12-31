@@ -29,12 +29,18 @@ class DevicesRelationManager extends RelationManager
 {
     protected static string $relationship = 'devices';
 
+    protected static ?string $title = 'Equipos';
+
+    protected static ?string $modelLabel = 'equipo';
+
+    protected static ?string $pluralModelLabel = 'equipos';
+
     public function form(Schema $schema): Schema
     {
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->label('Nombre del dispositivo')
+                    ->label('Nombre del equipo')
                     ->maxLength(150)
                     ->default(null),
                 TextInput::make('type')
@@ -51,7 +57,7 @@ class DevicesRelationManager extends RelationManager
                     ->maxLength(100)
                     ->default(null),
                 TextInput::make('serial')
-                    ->label('Serial del dispositivo')
+                    ->label('Serial del equipo')
                     ->maxLength(100)
                     ->default(null),
                 TextInput::make('access_password')
@@ -65,7 +71,8 @@ class DevicesRelationManager extends RelationManager
                     ->rows(3)
                     ->default(null)
                     ->columnSpanFull(),
-            ]);
+            ])
+            ->columns(3);
     }
 
     public function table(Table $table): Table
@@ -74,7 +81,7 @@ class DevicesRelationManager extends RelationManager
             ->recordTitleAttribute('type')
             ->columns([
                 TextColumn::make('name')
-                    ->label('Nombre del dispositivo')
+                    ->label('Nombre del equipo')
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('type')
@@ -90,7 +97,7 @@ class DevicesRelationManager extends RelationManager
                     ->toggleable()
                     ->searchable(),
                 TextColumn::make('serial')
-                    ->label('Serial del dispositivo')
+                    ->label('Serial del equipo')
                     ->toggleable()
                     ->searchable(),
                 TextColumn::make('created_at')
@@ -99,6 +106,7 @@ class DevicesRelationManager extends RelationManager
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('created_at', 'desc')
             ->filters([
                 TrashedFilter::make(),
             ])

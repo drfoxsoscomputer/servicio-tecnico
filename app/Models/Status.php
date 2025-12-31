@@ -5,15 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Client extends Model
+class Status extends Model
 {
     use SoftDeletes;
 
     protected $fillable = [
         'name',
-        'document_id',
-        'email',
-        'phone',
-        'address',
+        'color',
     ];
 }

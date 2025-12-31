@@ -16,6 +16,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use UnitEnum;
+use App\Filament\Resources\Devices\RelationManagers\ServiceOrdersRelationManager;
 
 class DeviceResource extends Resource
 {
@@ -44,7 +45,7 @@ class DeviceResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ServiceOrdersRelationManager::class,
         ];
     }
 

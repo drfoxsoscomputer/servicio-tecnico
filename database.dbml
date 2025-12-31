@@ -1,9 +1,57 @@
+// ==== USUARIOS ====
+
+Table users {
+  id int [pk, increment]
+  name varchar(255)
+  email varchar(255) [unique]
+  password varchar(255)
+  role varchar(30) [note: 'admin, super_admin, technician, receptionist']
+  deleted_at datetime [null]
+  created_at datetime
+  updated_at datetime
+}
+
+// ==== CATÁLOGOS ====
+
+Table types {
+  id int [pk, increment]
+  name varchar(100) [note: 'Laptop, PC, Impresora, etc.']
+  deleted_at datetime [null]
+}
+
+Table brands {
+  id int [pk, increment]
+  name varchar(100) [note: 'HP, Dell, Samsung, Apple, etc.']
+  deleted_at datetime [null]
+}
+
+Table statuses {
+  id int [pk, increment]
+  name varchar(50) [note: 'Recibido, Diagnosticando, Entregado']
+  color varchar(20) [note: 'Para los badges de Filament']
+  deleted_at datetime [null]
+}
+
+Table payment_methods {
+  id int [pk, increment]
+  name varchar(50) [note: 'Efectivo, Transferencia, USDT, etc.']
+  deleted_at datetime [null]
+}
+
+Table categories {
+  id int [pk, increment]
+  name varchar(100)
+  deleted_at datetime [null]
+}
+
+// ==== CLIENTES Y EQUIPOS ====
+
 Table clients {
   id int [pk, increment]
   name varchar(150) [note: 'Nombre del cliente']
+  document_id varchar(50) [null, note: 'Cedula o RIF V-, E-, J-, G-']
   email varchar(150) [null, note: 'Correo del cliente']
   phone varchar(50) [null, note: 'Telefono de contacto']
-  document_id varchar(50) [null, note: 'Cedula o RIF']
   address text [null, note: 'Direccion del cliente']
   deleted_at datetime [null, note: 'Soft delete: cliente marcado como eliminado']
   created_at datetime
@@ -12,12 +60,11 @@ Table clients {
 
 Table devices {
   id int [pk, increment]
-  client_id int [note: 'Cliente duenio del equipo']
-  name varchar(150) [note: 'Nombre identificador del equipo']
-  type varchar(50) [note: 'pc, laptop, impresora, etc.']
-  brand varchar(100) [null, note: 'Marca del equipo']
+  client_id int [note: 'Cliente dueño del equipo']
+  device_type_id int [note: 'Tipo de equipo, pc, laptop, impresora, etc.']
+  brand_id int [null, note: 'Marca del equipo']
   model varchar(100) [null, note: 'Modelo del equipo']
-  serial varchar(100) [null, note: 'Numero de serie']
+  serial varchar(100) [null, note: 'Serial de equipo']
   access_password varchar(150) [null, note: 'Contrasena de acceso del equipo']
   notes text [null, note: 'Notas del estado del equipo']
   deleted_at datetime [null, note: 'Soft delete: equipo marcado como eliminado']
@@ -25,37 +72,54 @@ Table devices {
   updated_at datetime
 }
 
-Table technicians {
+// --- TALLER: ÓRDENES DE SERVICIO ---
+Table service {
   id int [pk, increment]
-  name varchar(150) [note: 'Nombre del tecnico']
-  email varchar(150) [null, note: 'Correo del tecnico']
-  phone varchar(50) [null, note: 'Telefono del tecnico']
-  deleted_at datetime [null, note: 'Soft delete: tecnico marcado como eliminado']
-  created_at datetime
-  updated_at datetime
-}
-
-Table service_orders {
-  id int [pk, increment]
-  device_id int [note: 'Equipo asociado a la orden']
-  technician_id int [null, note: 'Tecnico asignado']
-  received_by_user_id int [null, note: 'Usuario que recibio el equipo']
-  closed_by_user_id int [null, note: 'Usuario que cerró/entrego la orden']
-  status varchar(30) [note: 'Estado de la orden']
-  problem_reported text [note: 'Problema reportado por el cliente']
+  device_id int
+  status_id int [note: 'Estado de la orden: recibido, diagnosticando, terminado, entregado']
+  technician_id int [null, note: 'ID del usuario con rol técnico']
+  received_by_user_id int [note: 'Usuario que recibio el equipo']
+  closed_by_user_id int [null, note: 'Usuario que entregó el equipo']
+  payment_method_id int [null]
+  problem_reported text [null, note: 'Problema reportado por el cliente']
   diagnosis text [null, note: 'Diagnostico del tecnico']
   work_done text [null, note: 'Trabajo realizado']
-  estimated_cost decimal(10,2) [null, note: 'Costo estimado']
-  total_cost decimal(10,2) [null, note: 'Costo final']
+  total_cost decimal(10,2) [default: 0]
   received_at datetime [note: 'Fecha de recepcion del equipo']
   delivered_at datetime [null, note: 'Fecha de entrega al cliente']
-  deleted_at datetime [null, note: 'Soft delete: orden marcada como eliminada']
+  deleted_at datetime [null]
+  created_at datetime
+}
+
+// Historial de cambios de estado de la orden (logs)
+
+Table service_logs {
+  id int [pk, increment]
+  service_order_id int [note: 'Orden de servicio']
+  old_status_id int [note: 'Estado anterior']
+  new_status_id int [note: 'Nuevo estado']
+  user_id int [note: 'Usuario que realizó el cambio']
+  note text [null, note: 'Notas adicionales sobre el cambio de estado']
   created_at datetime
   updated_at datetime
 }
 
-Table parts {
+// Fotos antes / después
+
+Table service_photos {
   id int [pk, increment]
+  service_order_id int [note: 'Orden de servicio relacionada']
+  type varchar(20) [note: 'before o after']
+  path varchar(255) [note: 'Ruta del archivo de imagen']
+  created_at datetime
+  updated_at datetime
+}
+
+// ==== INVENTARIO Y PRODUCTOS ====
+
+Table products {
+  id int [pk, increment]
+  category_id int [note: 'Categoria del producto']
   name varchar(150) [note: 'Nombre de la pieza o material']
   sku varchar(100) [null, note: 'Codigo interno o SKU']
   stock int [note: 'Cantidad en inventario']
@@ -66,28 +130,107 @@ Table parts {
   updated_at datetime
 }
 
-Table service_order_items {
+// Piezas usadas en órdenes
+
+Table order_parts {
   id int [pk, increment]
   service_order_id int [note: 'Orden de servicio']
-  part_id int [note: 'Pieza usada']
+  product_id int [note: 'Pieza usada']
   quantity int [note: 'Cantidad usada']
   unit_price decimal(10,2) [note: 'Precio de venta unitario en la orden']
   created_at datetime
   updated_at datetime
 }
 
-Table service_order_photos {
+// Movimientos de inventario (entradas/salidas)
+
+Table stock {
   id int [pk, increment]
-  service_order_id int [note: 'Orden de servicio relacionada']
-  type varchar(20) [note: 'before o after']
-  path varchar(255) [note: 'Ruta del archivo de imagen']
+  product_id int [note: 'Producto afectado']
+  service_order_id int [null, note: 'Orden de servicio relacionada (si aplica)']
+  sale_id int [null, note: 'Venta relacionada (si aplica)']
+  type varchar(20) [note: 'in, out, adjust (entrada, salida o ajuste)']
+  quantity int [note: 'Cantidad movida']
+  note text [null, note: 'Notas adicionales sobre el movimiento']
   created_at datetime
   updated_at datetime
 }
 
+// ==== VENTAS Y PAGOS ====
+
+Table sales {
+  id int [pk, increment]
+  client_id int [note: 'Cliente al que se le hizo la venta']
+  user_id int [note: 'Usuario que realizó la venta']
+  total_amount decimal(10,2) [note: 'Monto total de la venta']
+  discount decimal(10,2) [default: 0, note: 'Descuento aplicado']
+  tax decimal(10,2) [default: 0, note: 'Impuesto aplicado']
+  status varchar(20) [default: 'paid', note: 'pending (pendiente de pago), paid (pagado), cancelled (terminada sin exito)']
+  payment_method_id int [note: 'Método de pago utilizado']
+  created_at datetime
+  updated_at datetime
+}
+
+Table items {
+  id int [pk, increment]
+  sale_id int [note: 'Venta a la que pertenece el detalle']
+  product_id int [note: 'Producto vendido']
+  quantity int [note: 'Cantidad vendida']
+  unit_price decimal(10,2) [note: 'Precio unitario del producto en la venta']
+  created_at datetime
+  updated_at datetime
+}
+
+// Pagos (permite múltiples métodos por venta)
+Table payments {
+  id int [pk, increment]
+    sale_id int [note: 'Venta a la que pertenece el pago']
+    payment_method_id int [note: 'Método de pago utilizado']
+    amount decimal(10,2) [note: 'Monto pagado con este método']
+    paid_at datetime [note: 'Fecha y hora del pago']
+    note text [null, note: 'Notas adicionales sobre el pago']
+    created_at datetime
+    updated_at datetime
+}
+
+// ==== RELACIONES ====
+
+// clientes y equipos
 Ref: devices.client_id > clients.id
+Ref: devices.device_type_id > device_types.id
+Ref: devices.brand_id > brands.id
+
+// órdenes de servicio
 Ref: service_orders.device_id > devices.id
-Ref: service_orders.technician_id > technicians.id
-Ref: service_order_items.service_order_id > service_orders.id
-Ref: service_order_items.part_id > parts.id
+Ref: service_orders.status_id > order_statuses.id
+Ref: service_orders.technician_id > users.id
+Ref: service_orders.received_by_user_id > users.id
+Ref: service_orders.closed_by_user_id > users.id
+Ref: service_orders.payment_method_id > payment_methods.id
+
+// historial de estados
+Ref: service_order_logs.service_order_id > service_orders.id
+Ref: service_order_logs.old_status_id > order_statuses.id
+Ref: service_order_logs.new_status_id > order_statuses.id
+Ref: service_order_logs.user_id > users.id
+
+// fotos
 Ref: service_order_photos.service_order_id > service_orders.id
+
+// productos e inventario
+Ref: products.category_id > product_categories.id
+Ref: order_parts.service_order_id > service_orders.id
+Ref: order_parts.product_id > products.id
+
+// inventario (movimientos)
+Ref: inventory_movements.product_id > products.id
+Ref: inventory_movements.service_order_id > service_orders.id
+Ref: inventory_movements.sale_id > sales.id
+
+// ventas y pagos
+Ref: sales.client_id > clients.id
+Ref: sales.user_id > users.id
+Ref: sale_details.sale_id > sales.id
+Ref: sale_details.product_id > products.id
+Ref: payments.sale_id > sales.id
+Ref: payments.payment_method_id > payment_methods.id

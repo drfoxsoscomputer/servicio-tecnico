@@ -30,7 +30,7 @@ class DeviceForm
                 // })
                 ,
                 TextInput::make('name')
-                    ->label('Nombre del dispositivo')
+                    ->label('Nombre del equipo')
                     ->maxLength(150)
                     ->default(null),
                 TextInput::make('type')
@@ -47,7 +47,7 @@ class DeviceForm
                     ->maxLength(100)
                     ->default(null),
                 TextInput::make('serial')
-                    ->label('Serial del dispositivo')
+                    ->label('Serial del equipo')
                     ->maxLength(100)
                     ->default(null),
                 TextInput::make('access_password')
