@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -46,5 +47,30 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function servicesAsTechnician(): HasMany
+    {
+        return $this->hasMany(Service::class, 'technician_id');
+    }
+
+    public function servicesReceived(): HasMany
+    {
+        return $this->hasMany(Service::class, 'received_by_user_id');
+    }
+
+    public function servicesClosed(): HasMany
+    {
+        return $this->hasMany(Service::class, 'closed_by_user_id');
+    }
+
+    public function serviceLogs(): HasMany
+    {
+        return $this->hasMany(ServiceLog::class, 'user_id');
+    }
+
+    public function sales(): HasMany
+    {
+        return $this->hasMany(Sale::class, 'user_id');
     }
 }
