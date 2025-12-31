@@ -14,11 +14,18 @@ return new class extends Migration
         Schema::create('services', function (Blueprint $table) {
             $table->id();
             $table->foreignId('device_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('status_id')->constrained('statuses');
-            $table->foreignId('received_by_user_id')->nullable()->constrained('users');
+            $table->foreignId('status_id')->constrained();
+            $table->foreignId('received_by_user_id')->constrained('users');
             $table->foreignId('technician_id')->nullable()->constrained('users');
             $table->foreignId('closed_by_user_id')->nullable()->constrained('users');
             $table->foreignId('payment_method_id')->nullable()->constrained();
+            $table->text('problem_reported');
+            $table->text('diagnosis')->nullable();
+            $table->text('work_done')->nullable();
+            $table->decimal('total_cost', 10, 2)->default(0.00);
+            $table->dateTime('received_at');
+            $table->dateTime('delivered_at')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

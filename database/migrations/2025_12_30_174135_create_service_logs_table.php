@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('service_logs', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('service_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('old_status_id')->constrained('statuses');
+            $table->foreignId('new_status_id')->constrained('statuses');
+            $table->foreignId('user_id')->constrained();
+            $table->text('note')->nullable();
             $table->timestamps();
         });
     }

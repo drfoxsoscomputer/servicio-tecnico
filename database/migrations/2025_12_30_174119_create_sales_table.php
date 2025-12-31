@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('client_id')->constrained();
+            $table->foreignId('user_id')->constrained();
+            $table->decimal('total_amount', 10, 2)->default(0.00);
+            $table->decimal('discount', 10, 2)->default(0.00);
+            $table->decimal('tax', 10, 2)->default(0.00);
+            $table->string('status')->default('paid');
+            $table->foreignId('payment_method_id')->constrained();
             $table->timestamps();
         });
     }
