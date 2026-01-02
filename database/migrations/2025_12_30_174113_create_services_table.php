@@ -22,8 +22,8 @@ return new class extends Migration
             $table->text('problem_reported');
             $table->text('diagnosis')->nullable();
             $table->text('work_done')->nullable();
-            $table->decimal('total_cost', 10, 2)->default(0.00);
-            $table->dateTime('received_at');
+            $table->decimal('price_service', 10, 2)->default(0.00);
+            // $table->dateTime('received_at');
             $table->dateTime('delivered_at')->nullable();
             $table->softDeletes();
             $table->timestamps();

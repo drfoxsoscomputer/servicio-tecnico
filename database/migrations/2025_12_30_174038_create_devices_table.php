@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('brand_id')->nullable()->constrained();
             $table->string('model')->nullable();
             $table->string('serial')->unique()->nullable();
-            $table->text('access_password')->nullable();
+            $table->string('access_password')->nullable();
             $table->text('notes')->nullable();
             $table->softDeletes();
             $table->timestamps();

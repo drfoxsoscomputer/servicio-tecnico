@@ -21,7 +21,7 @@ class Service extends Model
         'problem_reported',
         'diagnosis',
         'work_done',
-        'total_cost',
+        'price_service',
         'received_at',
         'delivered_at',
     ];
@@ -45,21 +45,6 @@ class Service extends Model
     {
         return $this->belongsTo(User::class, 'technician_id');
     }
-
-    // public function receivedBy(): BelongsTo
-    // {
-    //     return $this->belongsTo(User::class, 'received_by_user_id');
-    // }
-
-    // public function closedBy(): BelongsTo
-    // {
-    //     return $this->belongsTo(User::class, 'closed_by_user_id');
-    // }
-
-    // public function paymentMethod(): BelongsTo
-    // {
-    //     return $this->belongsTo(PaymentMethod::class);
-    // }
 
     public function logs(): HasMany
     {
