@@ -15,9 +15,10 @@ class Product extends Model
         'category_id',
         'name',
         'sku',
-        'stock',
+        'barcode',
         'cost_price',
         'sale_price',
+        'is_active',
     ];
 
     public function category(): BelongsTo
@@ -25,18 +26,19 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function part(): HasMany
+    public function parts(): HasMany
     {
         return $this->hasMany(Part::class);
     }
 
-    public function stock(): HasMany
+    public function items(): HasMany
+    {
+        return $this->hasMany(Item::class);
+    }
+
+    public function stocks(): HasMany
     {
         return $this->hasMany(Stock::class);
     }
 
-    public function item(): HasMany
-    {
-        return $this->hasMany(Item::class);
-    }
 }

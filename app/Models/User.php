@@ -49,28 +49,29 @@ class User extends Authenticatable
         ];
     }
 
-    public function servicesAsTechnician(): HasMany
+    public function receivedServices(): HasMany
+    {
+        return $this->hasMany(Service::class, 'received_by');
+    }
+
+    public function technicianServices(): HasMany
     {
         return $this->hasMany(Service::class, 'technician_id');
     }
 
-    public function servicesReceived(): HasMany
+    public function closedServices(): HasMany
     {
-        return $this->hasMany(Service::class, 'received_by_user_id');
-    }
-
-    public function servicesClosed(): HasMany
-    {
-        return $this->hasMany(Service::class, 'closed_by_user_id');
-    }
-
-    public function serviceLogs(): HasMany
-    {
-        return $this->hasMany(ServiceLog::class, 'user_id');
+        return $this->hasMany(Service::class, 'closed_by');
     }
 
     public function sales(): HasMany
     {
-        return $this->hasMany(Sale::class, 'user_id');
+        return $this->hasMany(Sale::class);
     }
+
+    // public function serviceLogs(): HasMany
+    // {
+    //     return $this->hasMany(ServiceLog::class, 'user_id');
+    // }
+
 }

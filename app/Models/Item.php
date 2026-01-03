@@ -10,6 +10,7 @@ class Item extends Model
     protected $fillable = [
         'sale_id',
         'product_id',
+        'serial',
         'quantity',
         'unit_price',
     ];

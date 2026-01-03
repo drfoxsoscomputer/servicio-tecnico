@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Service extends Model
@@ -14,20 +15,18 @@ class Service extends Model
     protected $fillable = [
         'device_id',
         'status_id',
-        'received_by_user_id',
+        'received_by',
         'technician_id',
-        'closed_by_user_id',
-        'payment_method_id',
+        'closed_by',
         'problem_reported',
         'diagnosis',
+        'title',
         'work_done',
         'price_service',
-        'received_at',
         'delivered_at',
     ];
 
     protected $casts = [
-        'received_at' => 'datetime',
         'delivered_at' => 'datetime',
     ];
 
@@ -41,9 +40,19 @@ class Service extends Model
         return $this->belongsTo(Status::class);
     }
 
+    public function receivedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'received_by');
+    }
+
     public function technician(): BelongsTo
     {
         return $this->belongsTo(User::class, 'technician_id');
+    }
+
+    public function closedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'closed_by');
     }
 
     public function logs(): HasMany
@@ -61,5 +70,8 @@ class Service extends Model
         return $this->hasMany(Part::class);
     }
 
-
+    public function sale(): HasOne
+    {
+        return $this->hasOne(Sale::class);
+    }
 }

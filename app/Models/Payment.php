@@ -10,9 +10,13 @@ class Payment extends Model
     protected $fillable = [
         'sale_id',
         'payment_method_id',
+        'note',
         'amount',
         'paid_at',
-        'note',
+    ];
+
+    protected $casts = [
+        'paid_at' => 'datetime',
     ];
 
     public function sale(): BelongsTo

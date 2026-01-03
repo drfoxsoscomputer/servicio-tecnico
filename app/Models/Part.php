@@ -10,6 +10,7 @@ class Part extends Model
     protected $fillable = [
         'service_id',
         'product_id',
+        'serial',
         'quantity',
         'unit_price',
     ];

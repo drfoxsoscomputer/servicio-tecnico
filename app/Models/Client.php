@@ -13,9 +13,10 @@ class Client extends Model
     protected $fillable = [
         'name',
         'document_id',
-        'email',
         'phone',
+        'email',
         'address',
+        'notes',
     ];
 
     public function devices(): HasMany

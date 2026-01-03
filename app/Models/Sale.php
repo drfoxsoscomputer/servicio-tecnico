@@ -11,16 +11,31 @@ class Sale extends Model
     protected $fillable = [
         'client_id',
         'user_id',
+        'service_id',
+        'type',
+        'net_amount',
+        'discount_type',
+        'discount_value',
+        'discount_amount',
+        'tax_percentage',
+        'tax_amount',
         'total_amount',
-        'discount',
-        'tax',
         'status',
-        'payment_method_id',
     ];
 
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function service(): BelongsTo
+    {
+        return $this->belongsTo(Service::class);
     }
 
     public function items(): HasMany
