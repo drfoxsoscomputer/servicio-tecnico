@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('barcode',100)->nullable(); //código de barras
             $table->decimal('cost_price', 10, 2)->default(0.00);
             $table->decimal('sale_price', 10, 2);
-            $table->boolean('is_active')->default('true');
+            $table->boolean('is_active')->default(true);
             $table->softDeletes();
             $table->timestamps();
         });
