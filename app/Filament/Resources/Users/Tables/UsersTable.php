@@ -3,11 +3,9 @@
 namespace App\Filament\Resources\Users\Tables;
 
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
@@ -20,13 +18,9 @@ class UsersTable
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label('Nombre')
                     ->searchable(),
                 TextColumn::make('email')
-                    ->label('correo')
-                    ->searchable(),
-                TextColumn::make('roles.name')
-                    ->label('Rol')
+                    ->label('Email address')
                     ->searchable(),
                 TextColumn::make('email_verified_at')
                     ->dateTime()
@@ -51,8 +45,6 @@ class UsersTable
             ])
             ->recordActions([
                 EditAction::make(),
-                DeleteAction::make(),
-                RestoreAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

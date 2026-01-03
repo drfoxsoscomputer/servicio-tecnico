@@ -6,6 +6,7 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Hash;
 
 class UserForm
 {
@@ -14,22 +15,32 @@ class UserForm
         return $schema
             ->components([
                 TextInput::make('name')
+                    ->label('Nombre')
                     ->required(),
                 TextInput::make('email')
-                    ->label('Email address')
+                    ->label('email')
                     ->email()
-                    ->required(),
-                // DateTimePicker::make('email_verified_at'),
+                    ->required()
+                    ->unique(ignoreRecord: true),
                 TextInput::make('password')
+                    ->label('Contraseña')
                     ->password()
                     ->revealable()
-                    ->required(),
-                    Select::make('roles')
+                    ->dehydrated(fn($state) => filled($state))
+                    ->required(fn(string $context): bool => $context === 'create')
+                    ->dehydrated(fn($state) => Hash::make($state)),
+                Select::make('roles')
+                    ->label('Roles')
                     ->relationship('roles', 'name')
+                    ->multiple()
+                    // ->options([
+                    //     'admin' => 'Administrador',
+                    //     'technician' => 'Técnico',
+                    //     'cashier' => 'Cajero',
+                    // ])
                     ->preload()
-                    ->searchable(),
-                // TextInput::make('role')
-                //     ->default(null),
+                    ->searchable()
+                    ->required(),
             ]);
     }
 }
