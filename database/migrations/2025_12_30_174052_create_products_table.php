@@ -13,12 +13,13 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('category_id')->constrained();
-            $table->string('name');
-            $table->string('sku')->unique()->nullable();
-            $table->integer('stock')->default(0);
+            $table->foreignId('category_id')->constrained()->cascadeOnUpdate()->restrictOnDelete();
+            $table->string('name', 150);
+            $table->string('sku', 100)->nullable(); //código interno
+            $table->string('barcode',100)->nullable(); //código de barras
             $table->decimal('cost_price', 10, 2)->default(0.00);
-            $table->decimal('sale_price', 10, 2)->default(0.00);
+            $table->decimal('sale_price', 10, 2);
+            $table->boolean('is_active')->default('true');
             $table->softDeletes();
             $table->timestamps();
         });

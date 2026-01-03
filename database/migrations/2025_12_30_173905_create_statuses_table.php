@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('statuses', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->string('color')->nullable()->default('primary');
-            $table->softDeletes();
+            $table->string('name', 50);
+            $table->string('color', 20);
+            $table->boolean('is_active')->default(true);
+
             $table->timestamps();
         });
     }

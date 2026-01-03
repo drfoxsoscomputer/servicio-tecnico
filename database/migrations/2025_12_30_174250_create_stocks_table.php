@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('stocks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained();
-            $table->foreignId('service_id')->nullable()->constrained();
-            $table->foreignId('sale_id')->nullable()->constrained();
-            $table->string('type');
+            $table->foreignId('product_id')->constrained()->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreignId('service_id')->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete(); //movimiento ligado a servicio
+            $table->foreignId('sale_id')->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete(); //movimiento ligado a la venta
+            $table->string('type', 20); //in, out, adjust (entrada, salida, ajuste)
             $table->integer('quantity')->default(0);
             $table->text('note')->nullable();
             $table->timestamps();

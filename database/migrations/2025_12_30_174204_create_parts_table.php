@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('parts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('service_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('product_id')->constrained();
+            $table->foreignId('service_id')->constrained()->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreignId('product_id')->constrained()->cascadeOnUpdate()->restrictOnDelete();
+            $table->string('serial')->nullable(); //serial del repuesto instalado
             $table->integer('quantity')->default(0);
-            $table->decimal('unit_price', 10, 2)->default(0.00);
+            $table->decimal('unit_price', 10, 2);
             $table->timestamps();
         });
     }
