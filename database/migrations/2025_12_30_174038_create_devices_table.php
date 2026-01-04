@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('devices', function (Blueprint $table) {
             $table->id();
-            $table->string('client_id')->constrained()->cascadeOnUpdate()->restrictOnDelete();
-            $table->string('type_id')->constrained()->cascadeOnUpdate()->restrictOnDelete();
-            $table->string('brand_id')->constrained()->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreignId('client_id')->constrained()->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreignId('type_id')->constrained()->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreignId('brand_id')->constrained()->cascadeOnUpdate()->restrictOnDelete();
             $table->string('model', 100)->nullable();
             $table->string('serial', 100)->nullable();
             $table->string('access_password', 150)->nullable();
