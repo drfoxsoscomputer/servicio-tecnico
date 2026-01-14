@@ -16,6 +16,8 @@ class Stock extends Model
         'note',
     ];
 
+    // ===== RELACIONES =====
+
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);

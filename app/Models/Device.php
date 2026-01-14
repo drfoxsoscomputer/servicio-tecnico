@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -21,6 +22,8 @@ class Device extends Model
         'notes',
     ];
 
+    // ===== RELACIONES =====
+
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class);
@@ -39,5 +42,22 @@ class Device extends Model
     public function services(): HasMany
     {
         return $this->hasMany(Service::class);
+    }
+
+    // ===== SCOPES =====
+
+    public function scopeNotDeleted(Builder $query): Builder
+    {
+        return $query->whereNull('deleted_at');
+    }
+
+    // ===== ACCESSORS =====
+
+    public function getTitleAttribute(): string
+    {
+        $type = $this->type->name ?? 'N/A';
+        $brand = $this->brand->name ?? 'N/A';
+
+        return "{$type} {$brand} {$this->model} (SN: {$this->serial})";
     }
 }

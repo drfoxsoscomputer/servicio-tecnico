@@ -15,6 +15,8 @@ class Payment extends Model
         'paid_at',
     ];
 
+    // ===== RELACIONES =====
+
     protected $casts = [
         'paid_at' => 'datetime',
     ];

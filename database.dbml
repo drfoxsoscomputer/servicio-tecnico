@@ -68,7 +68,6 @@ Table clients {
 
 Table devices {
   id int [pk, increment]
-  name varchar(150)
   client_id int
   type_id int
   brand_id int
@@ -92,7 +91,7 @@ Table services {
   closed_by int [null, note: 'usuario que cierra entrega el servicio']
   problem_reported text
   diagnosis text [null]
-  title varchar(150) [null, note: 'nombre corto del servicio']
+  title varchar(150) [note: 'nombre corto del servicio']
   work_done text [null]
   price_service decimal(10,2) [default: 0.00]
   delivered_at datetime [null]

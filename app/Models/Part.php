@@ -15,6 +15,8 @@ class Part extends Model
         'unit_price',
     ];
 
+    // ===== RELACIONES =====
+
     public function service(): BelongsTo
     {
         return $this->belongsTo(Service::class);

@@ -15,6 +15,8 @@ class Item extends Model
         'unit_price',
     ];
 
+    // ===== RELACIONES =====
+
     public function sale(): BelongsTo
     {
         return $this->belongsTo(Sale::class);

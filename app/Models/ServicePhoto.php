@@ -9,12 +9,22 @@ class ServicePhoto extends Model
 {
     protected $fillable = [
         'service_id',
+        'name',
         'type',
         'path',
     ];
 
+    // ===== RELACIONES =====
+
     public function service(): BelongsTo
     {
         return $this->belongsTo(Service::class);
+    }
+
+    // ===== ACCESSORS =====
+
+    public function getTitleAttribute(): string
+    {
+        return "{$this->name} ({$this->type})";
     }
 }

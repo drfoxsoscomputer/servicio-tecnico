@@ -15,6 +15,8 @@ class ServiceLog extends Model
         'note',
     ];
 
+        // ===== RELACIONES =====
+
     public function service(): BelongsTo
     {
         return $this->belongsTo(Service::class);
@@ -33,5 +35,15 @@ class ServiceLog extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+        // ===== ACCESSORS =====
+
+    public function getTitleAttibute(): string
+    {
+        $user = $this->user->name ?? 'N/A';
+        $oldStatus = $this->oldStatus->name ?? 'N/A';
+        $newStatus = $this->newStatus->name ?? 'N/A';
+        return "{$user}: {$oldStatus} -> {$newStatus}";
     }
 }

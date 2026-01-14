@@ -49,6 +49,8 @@ class User extends Authenticatable
         ];
     }
 
+    // ===== RELACIONES =====
+
     public function receivedServices(): HasMany
     {
         return $this->hasMany(Service::class, 'received_by');
@@ -69,9 +71,11 @@ class User extends Authenticatable
         return $this->hasMany(Sale::class);
     }
 
-    // public function serviceLogs(): HasMany
-    // {
-    //     return $this->hasMany(ServiceLog::class, 'user_id');
-    // }
+    // ===== ACCESSORS =====
 
+    public function getTitleAttribute(): string
+    {
+        $role = $this->roles->first()?->name ?? 'No role';
+        return "{$this->name} ({$role})";
+    }
 }
