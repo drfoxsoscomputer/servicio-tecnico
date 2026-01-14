@@ -16,8 +16,9 @@ return new class extends Migration
             $table->foreignId('client_id')->constrained()->cascadeOnUpdate()->restrictOnDelete();
             $table->foreignId('type_id')->constrained()->cascadeOnUpdate()->restrictOnDelete();
             $table->foreignId('brand_id')->constrained()->cascadeOnUpdate()->restrictOnDelete();
+            $table->string('name', 150)->nullable();
             $table->string('model', 100)->nullable();
-            $table->string('serial', 100)->nullable();
+            $table->string('serial', 100)->nullable()->unique();
             $table->string('access_password', 150)->nullable();
             $table->text('notes')->nullable();
             $table->softDeletes();

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreignId('closed_by')->nullable()->constrained('users')->cascadeOnUpdate()->nullOnDelete();
             $table->text('problem_reported');
             $table->text('diagnosis')->nullable();
-            $table->string('title', 150)->nullable()->nullable(); //nombre corto del servicio
+            $table->string('title', 150)->index(); //nombre corto del servicio
             $table->text('work_done')->nullable();
             $table->decimal('price_service', 10, 2)->default(0.00);
             $table->dateTime('delivered_at')->nullable();

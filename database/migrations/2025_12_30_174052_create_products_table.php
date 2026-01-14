@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->foreignId('category_id')->constrained()->cascadeOnUpdate()->restrictOnDelete();
-            $table->string('name', 150);
-            $table->string('sku', 100)->nullable(); //código interno
-            $table->string('barcode',100)->nullable(); //código de barras
+            $table->string('name', 150)->index();
+            $table->string('sku', 100)->nullable()->unique(); //código interno
+            $table->string('barcode',100)->nullable()->unique(); //código de barras
             $table->decimal('cost_price', 10, 2)->default(0.00);
             $table->decimal('sale_price', 10, 2);
             $table->boolean('is_active')->default(true);

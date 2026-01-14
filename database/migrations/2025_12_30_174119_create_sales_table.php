@@ -13,20 +13,21 @@ return new class extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('client_id')->constrained()->cascadeOnUpdate()->restrictOnDelete();
-            $table->foreignId('user_id')->constrained()->cascadeOnUpdate()->restrictOnDelete();
-            $table->foreignId('service_id')->nullable()->constrained()->cascadeOnUpdate()->restrictOnDelete();
-            $table->string('type',20)->default('sale'); // sale (venta directa), service (sericio tecnico/reparación)
+            $table->foreignId('client_id')->index()->constrained()->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreignId('user_id')->index()->constrained()->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreignId('service_id')->nullable()->index()->constrained()->cascadeOnUpdate()->restrictOnDelete();
+            $table->string('type',20)->index()->default('sale'); // sale (venta directa), service (sericio tecnico/reparación)
             $table->decimal('net_amount', 10,2)->default(0.00); // base sin impuesto
             $table->string('discount_type', 10)->default('none'); //none (sin descuento), percent (porcentaje %), amount (monto)
             $table->decimal('discount_value', 10,2)->default(0.00); // porcentaje o monto ingresado
             $table->decimal('discount_amount', 10,2)->default(0.00); //monto de descuento calculado
             $table->decimal('tax_percentage', 5,2)->default(0.00); // % IVA aplicado
             $table->decimal('tax_amount', 10,2)->default(0.00); //monto de IVA
-            $table->decimal('total_amount', 10,2); //total con impuesto
-            $table->string('status', 20)->default('paid'); // pending, paid, canceled...
+            $table->decimal('total_amount', 10,2)->index(); //total con impuesto
+            $table->string('status', 20)->index()->default('draft'); // draft, pending, paid, canceled...
             $table->softDeletes();
             $table->timestamps();
+            $table->index('created_at');
         });
     }
 

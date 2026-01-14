@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('service_photos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('service_id')->constrained()->cascadeOnUpdate()->restrictOnDelete();
-            $table->string('type', 20); //before (antes), after (despues)
+            $table->foreignId('service_id')->index()->constrained()->cascadeOnUpdate()->restrictOnDelete();
+            $table->string('name', 150);
+            $table->string('type', 20)->index(); //before (antes), after (despues)
             $table->string('path');
             $table->timestamps();
         });

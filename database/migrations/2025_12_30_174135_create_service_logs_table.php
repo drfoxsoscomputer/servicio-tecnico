@@ -16,9 +16,10 @@ return new class extends Migration
             $table->foreignId('service_id')->constrained()->cascadeOnUpdate()->restrictOnDelete();
             $table->foreignId('old_status_id')->constrained('statuses')->cascadeOnUpdate()->restrictOnDelete();
             $table->foreignId('new_status_id')->constrained('statuses')->cascadeOnUpdate()->restrictOnDelete();
-            $table->foreignId('user_id')->constrained()->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreignId('user_id')->index()->constrained()->cascadeOnUpdate()->restrictOnDelete();
             $table->text('note')->nullable();
             $table->timestamps();
+            $table->index('created_at');
         });
     }
 

@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('sale_id')->constrained()->cascadeOnUpdate()->restrictOnDelete();
-            $table->foreignId('product_id')->constrained()->cascadeOnUpdate()->restrictOnDelete();
-            $table->string('serial')->nullable(); //serial del producto vendido
+            $table->foreignId('sale_id')->index()->constrained()->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreignId('product_id')->index()->constrained()->cascadeOnUpdate()->restrictOnDelete();
+            $table->string('serial', 255)->nullable(); //serial del producto vendido
             $table->integer('quantity')->default(1);
             $table->decimal('unit_price', 10, 2);
             $table->timestamps();

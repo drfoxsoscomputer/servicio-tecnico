@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('sale_id')->constrained()->cascadeOnUpdate()->restrictOnDelete();
-            $table->foreignId('payment_method_id')->constrained()->cascadeOnUpdate()->restrictOnDelete();
-            $table->text('note')->nullable(); //refrencia, banco, observaciones
+            $table->foreignId('sale_id')->index()->constrained()->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreignId('payment_method_id')->index()->constrained()->cascadeOnUpdate()->restrictOnDelete();
+            $table->text('note')->nullable(); //referencia, banco, observaciones...
             $table->decimal('amount', 10, 2);
-            $table->dateTime('paid_at');
+            $table->dateTime('paid_at')->index();
             $table->timestamps();
         });
     }
