@@ -68,6 +68,7 @@ Table clients {
 
 Table devices {
   id int [pk, increment]
+  name varchar(150)
   client_id int
   type_id int
   brand_id int
@@ -113,6 +114,7 @@ Table service_logs {
 
 Table service_photos {
   id int [pk, increment]
+  name varchar(150)
   service_id int
   type varchar(20) [note: 'before, after']
   path varchar(255)
