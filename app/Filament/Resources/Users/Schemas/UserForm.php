@@ -2,11 +2,14 @@
 
 namespace App\Filament\Resources\Users\Schemas;
 
+use Filament\Facades\Filament;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class UserForm
 {
@@ -15,29 +18,39 @@ class UserForm
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->label('Nombre')
+                    ->maxLength(255)
                     ->required(),
                 TextInput::make('email')
-                    ->label('email')
+                    ->label('Correo electrónico')
                     ->email()
-                    ->required()
-                    ->unique(ignoreRecord: true),
+                    ->maxLength(255)
+                    ->unique(ignoreRecord: true)
+                    ->required(),
                 TextInput::make('password')
-                    ->label('Contraseña')
                     ->password()
-                    ->revealable()
+                    ->dehydrateStateUsing(fn($state) => $state ? Hash::make($state) : null)
                     ->dehydrated(fn($state) => filled($state))
-                    ->required(fn(string $context): bool => $context === 'create')
-                    ->dehydrated(fn($state) => Hash::make($state)),
+                    ->required(fn(string $operation): bool => $operation === 'create')
+                    ->maxLength(255),
                 Select::make('roles')
                     ->label('Roles')
-                    ->relationship('roles', 'name')
                     ->multiple()
-                    // ->options([
-                    //     'admin' => 'Administrador',
-                    //     'technician' => 'Técnico',
-                    //     'cashier' => 'Cajero',
-                    // ])
+                    ->relationship(
+                        name: 'roles',
+                        titleAttribute: 'name',
+                        modifyQueryUsing: function (Builder $query) {
+                            /** @var User|null $user */
+                            $user = Filament::auth()->user();
+
+                            if ($user && $user->hasRole('super_admin')) {
+                                return $query;
+                            }
+                            return $query->where('name', '!=', 'super_admin');
+                        }
+                    )
+                    ->getOptionLabelFromRecordUsing(
+                        fn(\App\Models\Role $record) => $record->display_name
+                    )
                     ->preload()
                     ->searchable()
                     ->required(),
