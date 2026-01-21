@@ -75,7 +75,8 @@ class User extends Authenticatable
 
     public function getTitleAttribute(): string
     {
-        $role = $this->roles->first()?->name ?? 'No role';
-        return "{$this->name} ({$role})";
+        $role = $this->roles->first();
+        $roleName = $role?->display_name ?? 'Sin rol';
+        return "{$this->name} ({$roleName})";
     }
 }
