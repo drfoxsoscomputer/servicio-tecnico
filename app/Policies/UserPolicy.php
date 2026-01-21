@@ -2,20 +2,24 @@
 
 namespace App\Policies;
 
+use App\Models\User;
 use Illuminate\Foundation\Auth\User as AuthUser;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class UserPolicy
 {
     use HandlesAuthorization;
-    
+
     public function viewAny(AuthUser $authUser): bool
     {
         return $authUser->can('ViewAny:User');
     }
 
-    public function view(AuthUser $authUser): bool
+    public function view(AuthUser $authUser, User $user): bool
     {
+        if ($user->hasRole('super_admin') && !$authUser->hasRole('super_admin')) {
+            return false;
+        }
         return $authUser->can('View:User');
     }
 
@@ -24,28 +28,43 @@ class UserPolicy
         return $authUser->can('Create:User');
     }
 
-    public function update(AuthUser $authUser): bool
+    public function update(AuthUser $authUser, User $user): bool
     {
+        if ($user->hasRole('super_admin') && !$authUser->hasRole('super_admin')) {
+            return false;
+        }
         return $authUser->can('Update:User');
     }
 
-    public function delete(AuthUser $authUser): bool
+    public function delete(AuthUser $authUser, User $user): bool
     {
+        if ($user->hasRole('super_admin') && ! $authUser->hasRole('super_admin')) {
+            return false;
+        }
         return $authUser->can('Delete:User');
     }
 
-    public function restore(AuthUser $authUser): bool
+    public function restore(AuthUser $authUser, User $user): bool
     {
+        if ($user->hasRole('super_admin') && !$authUser->hasRole('super_admin')) {
+            return false;
+        }
         return $authUser->can('Restore:User');
     }
 
-    public function forceDelete(AuthUser $authUser): bool
+    public function forceDelete(AuthUser $authUser, User $user): bool
     {
+        if ($user->hasRole('super_admin') && !$authUser->hasRole('super_admin')) {
+            return false;
+        }
         return $authUser->can('ForceDelete:User');
     }
 
-    public function forceDeleteAny(AuthUser $authUser): bool
+    public function forceDeleteAny(AuthUser $authUser, User $user): bool
     {
+        if ($user->hasRole('super_admin') && !$authUser->hasRole('super_admin')) {
+            return false;
+        }
         return $authUser->can('ForceDeleteAny:User');
     }
 
@@ -63,5 +82,4 @@ class UserPolicy
     {
         return $authUser->can('Reorder:User');
     }
-
 }
