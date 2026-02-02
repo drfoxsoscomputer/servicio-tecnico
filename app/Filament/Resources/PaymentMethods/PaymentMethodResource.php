@@ -34,23 +34,24 @@ class PaymentMethodResource extends Resource
         return $schema
             ->components([
                 TextInput::make('name')
-                ->label('Nombre')
-                ->placeholder('Ej. Efectivo, Pago móvil, Transferencia')
-                ->required()
-                ->maxLength(255),
+                    ->label('Nombre')
+                    ->placeholder('Ej. Efectivo, Pago móvil, Transferencia')
+                    ->required()
+                    ->maxLength(255),
                 Toggle::make('is_active')
-                ->label('Activo')
-                ->default(true),
+                    ->label('Activo')
+                    ->default(true),
             ]);
-        }
+    }
 
-        public static function table(Table $table): Table
-        {
-            return $table
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->defaultSort('created_at', 'desc')
             ->recordTitleAttribute('name')
             ->columns([
                 TextColumn::make('name')
-                ->label('Nombre')
+                    ->label('Nombre')
                     ->searchable()
                     ->sortable(),
                 IconColumn::make('is_active')
@@ -72,7 +73,7 @@ class PaymentMethodResource extends Resource
                     ->label('Estado')
                     ->trueLabel('Solo activos')
                     ->falseLabel('Solo inactivos')
-                    ->nullableLabel('Todos'),
+                    ->placeholder('Todos'),
             ])
             ->recordActions([
                 EditAction::make(),

@@ -72,7 +72,7 @@ class CategoryResource extends Resource
                     ->label('Estado')
                     ->trueLabel('Solo activos')
                     ->falseLabel('Solo inactivos')
-                    ->nullableLabel('Todos'),
+                    ->placeholder('Todos'),
             ])
             ->recordActions([
                 EditAction::make(),

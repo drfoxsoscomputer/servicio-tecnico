@@ -27,6 +27,8 @@ class UserResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'title';
 
+    protected static ?string $modelLabel = 'Usuario';
+
     public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery();
