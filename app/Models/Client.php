@@ -43,7 +43,11 @@ class Client extends Model
 
     public function getTitleAttribute(): string
     {
-        $doc = $this->document_id ?? 'N/A';
-        return "{$this->name} ({$doc})";
+        // $doc = $this->document_id ?? 'N/A';
+        // return "{$this->name} ({$doc})";
+        if ($this->document_id) {
+            return "{$this->name} ({$this->document_id})";
+        }
+        return $this->name;
     }
 }

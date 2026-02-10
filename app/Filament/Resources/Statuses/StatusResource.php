@@ -21,12 +21,15 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Symfony\Component\Console\Color;
+use UnitEnum;
 
 class StatusResource extends Resource
 {
     protected static ?string $model = Status::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static string | UnitEnum | null $navigationGroup = 'Configuración';
 
     protected static ?string $recordTitleAttribute = 'name';
 

@@ -57,7 +57,9 @@ class Device extends Model
     {
         $type = $this->type->name ?? 'N/A';
         $brand = $this->brand->name ?? 'N/A';
+        $model = $this->model ?? 'N/A';
+        $serial = $this->serial ?? 'N/A';
 
-        return "{$type} {$brand} {$this->model} (SN: {$this->serial})";
+        return "{$type} {$brand} {$model} (SN: {$serial})";
     }
 }
