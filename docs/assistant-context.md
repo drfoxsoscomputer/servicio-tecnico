@@ -1,171 +1,232 @@
-# Contexto para Assistant – Proyecto Servicio Técnico
+# Contexto del asistente – Panel de servicio técnico
 
-## 1. Proyecto
+Este documento define el contexto, objetivos y reglas de trabajo para el asistente dentro del proyecto de panel de servicio técnico construido con Laravel y Filament. Su foco es dejar claros los modelos, el orden de implementación por fases y cómo deben generarse y ajustarse los Filament Resources asociados. [file:190]
 
-- Repo principal: https://github.com/drfoxsoscomputer/servicio-tecnico
-- Demo de referencia (UI / navegación): https://demo.filamentphp.com/
+## Objetivo de esta etapa
 
-El assistant debe alinear las sugerencias con este proyecto y no inventar módulos o estructuras fuera de lo definido aquí. [web:1][web:149]
-
----
-
-## 2. Fuentes de verdad
-
-Siempre revisar en este orden:
-
-1. `database.dbml`
-2. Documentación en `docs/` (por ejemplo, `workflow-servicio-tecnico.md`)
-3. README del proyecto
-4. Código actual en `app/Models` y `app/Filament/Resources`
-
-Si algo que el assistant propone no coincide con estos archivos, se debe ajustar a lo que dicen estas fuentes. [web:1]
+- Definir y ajustar todos los modelos con sus scopes, traits y accessors según la tabla consolidada. [file:190]
+- Generar y homogeneizar los Filament Resources indicados por fases, usando etiquetas coherentes en español neutro. [file:190]
+- Dejar una base consistente para poder extender luego el proyecto (validaciones, observers/events, optimización de consultas). [file:190]
 
 ---
 
-## 3. Tecnologías y estilo
+## 1. Tabla de modelos con información consolidada
 
-- Laravel + Filament **v4**. [web:134]
-- Uso de **Resources** y, cuando aplique, clases `Schemas` para formularios/tablas.
-- Navegación de Filament:
-    - Usar principalmente `modelLabel` y `pluralModelLabel` para los nombres visibles del recurso (singular/plural).
-    - El sidebar usa por defecto `pluralModelLabel` como texto del menú.
-    - Solo definir `navigationLabel` cuando se quiera un nombre distinto en el menú.
-    - Usar `navigationGroup` (string o enum) para agrupar recursos.
-    - Usar `navigationSort` para ordenar dentro de cada grupo. [web:149][web:134]
-- Idioma: español neutro.
-- Dominio: sistema de **servicio técnico + tienda**, no solo inventario.
-
----
-
-## 4. Navegación actual del panel
-
-Grupos y recursos:
-
-- **(Sin grupo, arriba)**
-    - Clientes
-        - `modelLabel`: `cliente`
-        - `pluralModelLabel`: `clientes`
-        - Sin `navigationGroup` (aparece solo arriba).
-
-- **Equipos**
-    - Equipos (Devices)
-    - Tipos
-    - Marcas
-
-- **Tienda**
-    - Categorías
-    - Métodos de pago
-    - Estados
-
-- **Seguridad**
-    - Usuarios
-    - Roles (Shield)
-
-Reglas de navegación:
-
-- Cada Resource debe tener `modelLabel` y `pluralModelLabel` en español.
-- Cada Resource (excepto Clientes) debe tener un `navigationGroup` que coincida con uno de los grupos definidos arriba.
-- Solo usar `navigationLabel` si el texto del menú debe ser distinto del `pluralModelLabel`.
-- Usar `navigationSort` para que el orden dentro de cada grupo sea coherente.
+Modelo | Accessor | Qué muestra | Scopes | Traits
+---|---|---|---|---
+User | Sí | Nombre (Rol) | - | HasFactory, Notifiable, SoftDeletes, HasRoles
+Type | No | - | Active | -
+Brand | No | - | Active | -
+Status | No | - | Active | -
+PaymentMethod | No | - | Active | -
+Category | No | - | Active | -
+Client | Sí | Nombre (Documento) | NotDeleted | SoftDeletes
+Device | Sí | Tipo Marca Modelo (SN) | NotDeleted | SoftDeletes
+Service | Sí | #ID - Título (Status) | NotDeleted | SoftDeletes
+ServiceLog | Sí | Usuario:Status_old→Status_new | - | -
+ServicePhoto | Sí | Nombre (Tipo) | - | -
+Product | No | - | Active, NotDeleted | SoftDeletes
+Stock | No | - | - | -
+Sale | Sí | Nota #ID-Cliente(Documento)-Status | NotDeleted, Paid, Pending | SoftDeletes
+Item | No | - | - | -
+Payment | No | - | - | -
+Part | No | - | - | -
 
 ---
 
-## 5. Fases de trabajo
+## 2. Notas importantes sobre modelos
 
-> Esta sección se debe ir actualizando a medida que avanza el proyecto.
+Imports a agregar en cada modelo:
 
-### Fase 2 – Recursos base y navegación
+Para modelos con scopes:
 
-Objetivo: tener listo el esqueleto del panel (recursos base y navegación organizada).
+```php
+use Illuminate\Database\Eloquent\Builder;
+Para modelos con SoftDeletes:
 
-Incluye:
+php
+use Illuminate\Database\Eloquent\SoftDeletes;
+Para relaciones (ya presentes en los modelos):
 
-- Resources y modelos base:
-    - Clients
-    - Devices
-    - Types
-    - Brands
-    - Categories
-    - PaymentMethods
-    - Statuses
-    - Users
-    - Roles / Shield
-- Formularios:
-    - Campos claros, labels y placeholders en español.
-    - Uso de `relationship()` para selects.
-    - En Device:
-        - Tabs para información de cliente, detalles del equipo y notas.
-        - Selects de cliente/tipo/marca con búsqueda y `createOptionForm` reutilizando sus formularios/resources.
-- Tablas:
-    - Columnas principales (cliente, equipo, etc.).
-    - `created_at` / `updated_at` como columnas toggleables.
-    - Filtros de soft delete (`TrashedFilter`) donde haya `SoftDeletes`. [web:137][web:141]
-- Navegación:
-    - Grupos definidos como en la sección 4.
-    - `navigationSort` coherente dentro de cada grupo.
+php
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+```
 
-### Fase 3 – Servicio técnico (próxima)
+### Orden de implementación recomendado (modelos)
 
-Debe ajustarse a `workflow-servicio-tecnico.md` y `database.dbml`. [web:1]
+FASE 1 – Catálogos (sin dependencias):
 
-- Modelo y migración de `Service` (u orden de servicio).
-- `ServiceResource`:
-    - Campos principales: cliente, equipo, estado, categoría, descripción del problema, notas internas, fechas clave, totales.
-- RelationManagers:
-    - Servicios dentro de Client.
-    - Servicios dentro de Device. [web:34][web:167]
+1. User (con accessor + HasRoles)
+2. Type (con scope Active)
+3. Brand (con scope Active)
+4. Status (con scope Active)
+5. PaymentMethod (con scope Active)
+6. Category (con scope Active)
 
-Fases posteriores (por ejemplo, ventas en tienda) se documentarán cuando se inicien.
+FASE 2 – Clientes y equipos: 
 
----
+7. Client (con accessor + SoftDeletes + scope NotDeleted)
+8. Device (con accessor + SoftDeletes + scope NotDeleted)
 
-## 6. Reglas para el Assistant
+FASE 3 – Taller: 
 
-Estas reglas aplican siempre, en cualquier conversación sobre este proyecto:
+9. Service (con accessor + SoftDeletes + scope NotDeleted)
+10. ServiceLog (con accessor)
+11. ServicePhoto (con accessor + agregar `name` a `$fillable`)
 
-1. **No salir del contexto del proyecto**
-    - Verificar primero `database.dbml`, README y documentación en `docs/` antes de proponer nuevos modelos, campos, relaciones o flujos. [web:1]
-    - No inventar módulos que no estén alineados con las fases o el dominio descrito.
+FASE 4 – Inventario: 
 
-2. **Respetar las fases**
-    - Si se está trabajando en Fase 2, no diseñar Fase 3 completa salvo que el usuario lo pida explícitamente.
-    - Al pasar de una fase a otra, actualizar esta sección para reflejar el nuevo objetivo.
+12. Product (con scopes Active + NotDeleted)
+13. Stock (sin cambios)
 
-3. **Proponer de forma puntual**
-    - Un paso concreto a la vez (por ejemplo: “ajustar DeviceForm”, “definir navegación de X”), esperando validación antes de avanzar.
-    - Evitar proponer muchos cambios distintos en un mismo mensaje.
+FASE 5 – Ventas: 
 
-4. **Nombres y UX**
-    - Usar nombres y grupos coherentes con un sistema de servicio técnico + tienda, tomando como referencia también la demo de Filament. [web:149][web:160]
-    - Mantener labels, placeholders y textos visibles en español neutro.
-    - Seguir los patrones de Filament v4 (Resources, Schemas, navegación, etc.). [web:134]
+14. Sale (con accessor + SoftDeletes + scopes NotDeleted, Paid, Pending)
+15. Item (sin cambios)
+16. Payment (sin cambios)
+17. Part (sin cambios)
 
-5. **Uso de Resources y navegación**
-    - Aprovechar `modelLabel` / `pluralModelLabel` como nombres por defecto para el menú.
-    - Añadir `navigationGroup` y `navigationSort` en cada Resource según la estructura de la sección 4.
-    - Solo usar `navigationLabel` cuando se requiera un texto de menú diferente del plural del modelo.
+### Posibles mejoras futuras
 
-6. **Actualización de este documento**
-   - Cada vez que se acuerde una **nueva regla**, un cambio importante de navegación o se **complete una fase o sub‑tarea importante**, este archivo (`docs/assistant-context.md`) debe actualizarse para reflejar el nuevo estado (fase actual, último trabajo realizado y siguiente paso).
-   - En nuevas conversaciones, el usuario debe compartir o referenciar la versión actual de este documento para que el assistant trabaje siempre con el contexto más reciente.
+Observers / Events: 
 
-## 7. Estado actual y siguiente paso
+- Crear automáticamente Stock cuando se agrega Part a Service.
+- Crear automáticamente Stock cuando se agrega Item a Sale.
+- Registrar automáticamente ServiceLog cuando cambia status en Service.
 
-- Fase actual: Fase 2 – Recursos base y navegación.
-- Último trabajo realizado:
-    - Ajuste de navegación (grupos: Equipos, Tienda, Seguridad; Clientes sin grupo).
-    - DeviceResource form/table refinados.
-- Siguiente paso sugerido para el assistant:
-    - Revisar y homogeneizar **TODOS** los Resources base (Brand, Category, PaymentMethod, Status, Type, User) para:
-        - Labels en español coherentes.
-        - Columnas de tabla (created_at/updated_at toggleables).
-        - Filtros de soft delete donde aplique.
+Validaciones: 
 
-> IMPORTANTE: Al completar este “siguiente paso”, el assistant y el usuario deben actualizar esta sección (fase, último trabajo y próximo paso) antes de continuar con la fase siguiente.
+- Agregar FormRequest o Rules en los models si es necesario.
+
+Query optimization: 
+
+- Agregar `with()` en relaciones para eager loading en Filament.
+
+Campos adicionales: 
+
+- Device: considerar agregar `name` (ya está en `$fillable` de la migración).
 
 ---
 
+## 3. Comandos artisan finales (Filament Resources)
 
-<!-- Proyecto: https://github.com/drfoxsoscomputer/servicio-tecnico
+Estos comandos definen cómo deben generarse los Filament Resources para cada modelo, organizados por fases. 
+
+### FASE 1: Catálogos
+
+```bash
+php artisan make:filament-resource User --generate --soft-deletes --attribute=title
+php artisan make:filament-resource Type --simple --attribute=name
+php artisan make:filament-resource Brand --simple --attribute=name
+php artisan make:filament-resource Status --simple --attribute=name
+php artisan make:filament-resource PaymentMethod --simple --attribute=name
+php artisan make:filament-resource Category --simple --attribute=name
+``` 
+
+### FASE 2: Clientes y equipos
+
+```bash
+php artisan make:filament-resource Client --generate --soft-deletes --attribute=title
+php artisan make:filament-resource Device --generate --soft-deletes --attribute=title
+``` 
+
+### FASE 3: Taller
+
+```bash
+php artisan make:filament-resource Service --generate --soft-deletes --attribute=title
+php artisan make:filament-resource ServiceLog --simple --attribute=title
+php artisan make:filament-resource ServicePhoto --simple --attribute=title
+``` 
+
+### FASE 4: Inventario
+
+```bash
+php artisan make:filament-resource Product --generate --soft-deletes --attribute=name
+php artisan make:filament-resource Stock --simple --attribute=id
+``` 
+
+### FASE 5: Ventas
+
+```bash
+php artisan make:filament-resource Sale --generate --soft-deletes --attribute=title
+php artisan make:filament-resource Item --simple --attribute=id
+php artisan make:filament-resource Payment --simple --attribute=id
+php artisan make:filament-resource Part --simple --attribute=id
+``` 
+
+### Script completo (ejecución por fases)
+
+```bash
+# FASE 1
+php artisan make:filament-resource User --generate --soft-deletes --attribute=title && \
+php artisan make:filament-resource Type --simple --attribute=name && \
+php artisan make:filament-resource Brand --simple --attribute=name && \
+php artisan make:filament-resource Status --simple --attribute=name && \
+php artisan make:filament-resource PaymentMethod --simple --attribute=name && \
+php artisan make:filament-resource Category --simple --attribute=name && \
+
+# FASE 2
+php artisan make:filament-resource Client --generate --soft-deletes --attribute=title && \
+php artisan make:filament-resource Device --generate --soft-deletes --attribute=title && \
+
+# FASE 3
+php artisan make:filament-resource Service --generate --soft-deletes --attribute=title && \
+php artisan make:filament-resource ServiceLog --simple --attribute=title && \
+php artisan make:filament-resource ServicePhoto --simple --attribute=title && \
+
+# FASE 4
+php artisan make:filament-resource Product --generate --soft-deletes --attribute=name && \
+php artisan make:filament-resource Stock --simple --attribute=id && \
+
+# FASE 5
+php artisan make:filament-resource Sale --generate --soft-deletes --attribute=title && \
+php artisan make:filament-resource Item --simple --attribute=id && \
+php artisan make:filament-resource Payment --simple --attribute=id && \
+php artisan make:filament-resource Part --simple --attribute=id
+``` 
+
+---
+
+## 4. Convenciones para el asistente
+
+Esta sección define cómo debe comportarse el asistente al trabajar con este repositorio y este documento. 
+
+- Los modelos y Resources definidos en las fases (User, Type, Brand, Status, PaymentMethod, Category, Client, Device, Service, ServiceLog, ServicePhoto, Product, Stock, Sale, Item, Payment, Part) se consideran la fuente de verdad del proyecto. 
+- Si un Filament Resource de esa lista **no existe** todavía en el código, el asistente debe indicarlo explícitamente y sugerir el comando correspondiente de esta sección, por ejemplo:  
+  - `php artisan make:filament-resource Brand --simple --attribute=name`  
+  - `php artisan make:filament-resource Client --generate --soft-deletes --attribute=title`  
+  reutilizando siempre la variante exacta que aparece en “Comandos artisan finales”. 
+- Si el Filament Resource **ya existe**, el asistente debe trabajar directamente sobre él sin pedir que se pegue el código completo, describiendo únicamente los cambios a realizar, tales como:
+  - Definir o ajustar `protected static ?string $modelLabel` y `protected static ?string $pluralModelLabel` en español neutro.
+  - Ajustar textos de navegación (grupo, icono, orden).
+  - Ajustar el formulario (`form()`) y la tabla (`table()`), indicando qué campos agregar, mostrar, ocultar o hacer obligatorios.
+
+### Reglas específicas para Resources
+
+- Todos los Resources que expongan modelos con timestamps deben incluir las columnas `created_at` y `updated_at` en la tabla, marcadas como columnas ocultables (toggleables) por el usuario.
+- Para modelos que usen `SoftDeletes`, los Resources deben incluir el filtro de elementos eliminados (`TrashedFilter`) en sus tablas.
+- El asistente no debe inventar campos, relaciones o scopes que no estén definidos en este documento o en el código existente; si algo no está claro, debe preguntarlo o marcarlo explícitamente como propuesta.
+
+---
+
+## 5. Convenciones de navegación en Filament
+
+Para mantener una navegación consistente en el panel:
+
+- Agrupar los Resources en grupos de navegación alineados con las fases de este documento, por ejemplo:
+  - “Catálogos” (User, Type, Brand, Status, PaymentMethod, Category).
+  - “Clientes y equipos” (Client, Device).
+  - “Taller” (Service, ServiceLog, ServicePhoto).
+  - “Inventario” (Product, Stock).
+  - “Ventas” (Sale, Item, Payment, Part).
+- Respetar el mismo orden de fases al ordenar los grupos y los Resources dentro del panel.
+- Usar labels en español neutro para los grupos y Resources, evitando términos demasiado locales si no están documentados en este archivo.
+
+---
+
+
+Proyecto: https://github.com/drfoxsoscomputer/servicio-tecnico
 El contexto, reglas, fases y estado actual están en docs/assistant-context.md del repo.
-Actúa siguiendo ese archivo (no inventes nada fuera de lo que ahí se define) y continúa desde la fase y el “siguiente paso” que allí se indique. -->
+Actúa siguiendo ese archivo (no inventes nada fuera de lo que ahí se define) y continúa desde la fase y el “siguiente paso” que allí se indique.
