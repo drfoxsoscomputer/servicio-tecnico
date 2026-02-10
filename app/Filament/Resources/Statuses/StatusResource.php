@@ -29,7 +29,7 @@ class StatusResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Configuración';
+    protected static string | UnitEnum | null $navigationGroup = 'Tienda';
 
     protected static ?string $recordTitleAttribute = 'name';
 
