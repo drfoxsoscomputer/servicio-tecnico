@@ -1,12 +1,12 @@
 # Contexto del asistente – Panel de servicio técnico
 
-Este documento define el contexto, objetivos y reglas de trabajo para el asistente dentro del proyecto de panel de servicio técnico construido con Laravel y Filament. Su foco es dejar claros los modelos, el orden de implementación por fases y cómo deben generarse y ajustarse los Filament Resources asociados. [file:190]
+Este documento define el contexto, objetivos y reglas de trabajo para el asistente dentro del proyecto de panel de servicio técnico construido con Laravel y Filament. Su foco es dejar claros los modelos, el orden de implementación por fases y cómo deben generarse y ajustarse los Filament Resources asociados. 
 
 ## Objetivo de esta etapa
 
-- Definir y ajustar todos los modelos con sus scopes, traits y accessors según la tabla consolidada. [file:190]
-- Generar y homogeneizar los Filament Resources indicados por fases, usando etiquetas coherentes en español neutro. [file:190]
-- Dejar una base consistente para poder extender luego el proyecto (validaciones, observers/events, optimización de consultas). [file:190]
+- Definir y ajustar todos los modelos con sus scopes, traits y accessors según la tabla consolidada. 
+- Generar y homogeneizar los Filament Resources indicados por fases, usando etiquetas coherentes en español neutro. 
+- Dejar una base consistente para poder extender luego el proyecto (validaciones, observers/events, optimización de consultas).
 
 ---
 
@@ -36,7 +36,7 @@ Part | No | - | - | -
 
 ## 2. Notas importantes sobre modelos
 
-Imports a agregar en cada modelo:
+Imports a agregar en cada modelo: 
 
 Para modelos con scopes:
 
@@ -56,7 +56,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 ### Orden de implementación recomendado (modelos)
 
-FASE 1 – Catálogos (sin dependencias):
+FASE 1 – Catálogos (sin dependencias): 
 
 1. User (con accessor + HasRoles)
 2. Type (con scope Active)
@@ -90,13 +90,13 @@ FASE 5 – Ventas:
 
 ### Posibles mejoras futuras
 
-Observers / Events: 
+Observers / Events:
 
 - Crear automáticamente Stock cuando se agrega Part a Service.
 - Crear automáticamente Stock cuando se agrega Item a Sale.
 - Registrar automáticamente ServiceLog cuando cambia status en Service.
 
-Validaciones: 
+Validaciones:
 
 - Agregar FormRequest o Rules en los models si es necesario.
 
@@ -112,7 +112,7 @@ Campos adicionales:
 
 ## 3. Comandos artisan finales (Filament Resources)
 
-Estos comandos definen cómo deben generarse los Filament Resources para cada modelo, organizados por fases. 
+Estos comandos definen cómo deben generarse los Filament Resources para cada modelo, organizados por fases. [file:190]
 
 ### FASE 1: Catálogos
 
@@ -226,7 +226,21 @@ Para mantener una navegación consistente en el panel:
 
 ---
 
+## 6. Estado actual
 
-Proyecto: https://github.com/drfoxsoscomputer/servicio-tecnico
+Fase actual: **Fase 1 – Catálogos**.  
+
+Siguiente paso: **Revisar y homogeneizar todos los Resources base de catálogos (Brand, Category, PaymentMethod, Status, Type, User) para**:
+
+- Usar labels y `modelLabel` / `pluralModelLabel` coherentes en español neutro.
+- Configurar columnas de tabla, incluyendo `created_at` y `updated_at` como columnas ocultables (toggleables).
+- Agregar filtros de soft delete (`TrashedFilter`) en los recursos que usen `SoftDeletes`.
+
+El asistente debe continuar desde este siguiente paso, eligiendo un Resource concreto (por ejemplo `BrandResource`) y proponiendo los ajustes necesarios según las convenciones de este documento, sin salirse de lo aquí definido.
+
+---
+
+
+<!-- Proyecto: https://github.com/drfoxsoscomputer/servicio-tecnico
 El contexto, reglas, fases y estado actual están en docs/assistant-context.md del repo.
-Actúa siguiendo ese archivo (no inventes nada fuera de lo que ahí se define) y continúa desde la fase y el “siguiente paso” que allí se indique.
+Actúa siguiendo ese archivo (no inventes nada fuera de lo que ahí se define) y continúa desde la fase y el “siguiente paso” que allí se indique. -->
