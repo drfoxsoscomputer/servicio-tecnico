@@ -36,7 +36,7 @@ class UserResource extends Resource
     {
         $query = parent::getEloquentQuery();
         $authUser = Filament::auth()->user();
-        if ($authUser && method_exists($authUser, 'hasRole') && !$authUser->hasRole('super_admin')) {
+        if ($authUser instanceof User && !$authUser->hasRole('super_admin')) {
             $query->whereDoesntHave('roles', function (Builder $q) {
                 $q->where('name', 'super_admin');
             });
