@@ -112,7 +112,7 @@ Campos adicionales:
 
 ## 3. Comandos artisan finales (Filament Resources)
 
-Estos comandos definen cómo deben generarse los Filament Resources para cada modelo, organizados por fases. [file:190]
+Estos comandos definen cómo deben generarse los Filament Resources para cada modelo, organizados por fases. 
 
 ### FASE 1: Catálogos
 
@@ -202,6 +202,16 @@ Esta sección define cómo debe comportarse el asistente al trabajar con este re
     - Definir o ajustar `protected static ?string $modelLabel` y `protected static ?string $pluralModelLabel` en español neutro.
     - Ajustar textos de navegación (grupo, icono, orden).
     - Ajustar el formulario (`form()`) y la tabla (`table()`), indicando qué campos agregar, mostrar, ocultar o hacer obligatorios.
+- El asistente debe considerar este archivo como fuente de verdad. Si hay conflicto entre:
+  - lo que “asuma” del código y
+  - lo que dice este documento (tabla de modelos, traits, scopes, SoftDeletes, comandos artisan, etc.),
+  **siempre debe prevalecer este documento**.
+- Al proponer código para un Resource que ya existe (por ejemplo `ClientResource` o `DeviceResource`), el asistente debe:
+  - Respetar el modelo, scopes y traits definidos en la tabla de modelos.
+  - Respetar la estructura generada por los comandos artisan indicados.
+  - Ajustar solo lo necesario (labels, navegación, columnas, filtros) sin eliminar rasgos importantes (SoftDeletes, scopes, relaciones).
+- El asistente no debe reescribir completamente una clase existente “desde cero” ignorando el código ya generado, salvo que este documento lo pida explícitamente.
+
 
 ### Reglas específicas para Resources
 
@@ -266,4 +276,7 @@ El asistente debe continuar desde este siguiente paso, eligiendo un Resource con
 
 <!-- Proyecto: https://github.com/drfoxsoscomputer/servicio-tecnico
 El contexto, reglas, fases y estado actual están en docs/assistant-context.md del repo.
-Actúa siguiendo ese archivo (no inventes nada fuera de lo que ahí se define) y continúa desde la fase y el “siguiente paso” que allí se indique. -->
+Actúa siguiendo ese archivo (no inventes nada fuera de lo que ahí se define) y continúa desde la fase y el “siguiente paso” que allí se indique.
+No inventes estructuras nuevas de Resources desde cero.
+Parte del código existente en el repo y ajústalo para cumplir este assistant-context.md.
+Si tu propuesta contradice la tabla de modelos, traits o scopes de este documento, está mal. -->
