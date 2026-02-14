@@ -18,7 +18,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Filters\TernaryFilter;
 use App\Filament\Resources\Brands\Pages\ManageBrands;
-use UnitEnum;
+// use UnitEnum;
 
 class BrandResource extends Resource
 {
@@ -26,7 +26,7 @@ class BrandResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static string | UnitEnum| null $navigationGroup = 'Equipos';
+    protected static string |\UnitEnum| null $navigationGroup = 'Equipos';
 
     protected static ?string $recordTitleAttribute = 'name';
 

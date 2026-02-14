@@ -17,7 +17,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use UnitEnum;
+// use UnitEnum;
 
 class ClientResource extends Resource
 {
@@ -29,7 +29,7 @@ class ClientResource extends Resource
 
     protected static ?string $modelLabel = 'Cliente';
 
-    // protected static string | UnitEnum | null $navigationGroup = 'Clientes';
+    // protected static string |\UnitEnum | null $navigationGroup = 'Clientes';
 
     public static function form(Schema $schema): Schema
     {
