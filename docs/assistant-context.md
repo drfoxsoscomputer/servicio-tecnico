@@ -228,13 +228,14 @@ Para mantener una navegación consistente en el panel:
 
 ## 6. Estado actual
 
-Fase actual: **Fase 1 – Catálogos**.  
+Fase actual: **Fase 2 – Clientes y equipos**.
 
-Siguiente paso: **Revisar y homogeneizar todos los Resources base de catálogos (Brand, Category, PaymentMethod, Status, Type, User) para**:
+Siguiente paso: **Revisar y homogeneizar los Resources de Client y Device según las convenciones de este documento**, asegurando que:
 
-- Usar labels y `modelLabel` / `pluralModelLabel` coherentes en español neutro.
-- Configurar columnas de tabla, incluyendo `created_at` y `updated_at` como columnas ocultables (toggleables).
-- Agregar filtros de soft delete (`TrashedFilter`) en los recursos que usen `SoftDeletes`.
+- Ambos Resources existen y usan labels y `modelLabel` / `pluralModelLabel` coherentes en español neutro.
+- Están ubicados en un grupo de navegación adecuado (por ejemplo, “Clientes y equipos”), respetando el orden de fases.
+- Sus tablas incluyen `created_at` y `updated_at` como columnas ocultables (toggleables).
+- Incluyen `TrashedFilter` porque sus modelos usan `SoftDeletes`, de acuerdo con la tabla de modelos.
 
 El asistente debe continuar desde este siguiente paso, eligiendo un Resource concreto (por ejemplo `BrandResource`) y proponiendo los ajustes necesarios según las convenciones de este documento, sin salirse de lo aquí definido.
 
