@@ -1,42 +1,42 @@
 # Contexto del asistente – Panel de servicio técnico
 
-Este documento define el contexto, objetivos y reglas de trabajo para el asistente dentro del proyecto de panel de servicio técnico construido con Laravel y Filament. Su foco es dejar claros los modelos, el orden de implementación por fases y cómo deben generarse y ajustarse los Filament Resources asociados. 
+Este documento define el contexto, objetivos y reglas de trabajo para el asistente dentro del proyecto de panel de servicio técnico construido con Laravel y Filament. Su foco es dejar claros los modelos, el orden de implementación por fases y cómo deben generarse y ajustarse los Filament Resources asociados.
 
 ## Objetivo de esta etapa
 
-- Definir y ajustar todos los modelos con sus scopes, traits y accessors según la tabla consolidada. 
-- Generar y homogeneizar los Filament Resources indicados por fases, usando etiquetas coherentes en español neutro. 
+- Definir y ajustar todos los modelos con sus scopes, traits y accessors según la tabla consolidada.
+- Generar y homogeneizar los Filament Resources indicados por fases, usando etiquetas coherentes en español neutro.
 - Dejar una base consistente para poder extender luego el proyecto (validaciones, observers/events, optimización de consultas).
 
 ---
 
 ## 1. Tabla de modelos con información consolidada
 
-Modelo | Accessor | Qué muestra | Scopes | Traits
----|---|---|---|---
-User | Sí | Nombre (Rol) | - | HasFactory, Notifiable, SoftDeletes, HasRoles
-Type | No | - | Active | -
-Brand | No | - | Active | -
-Status | No | - | Active | -
-PaymentMethod | No | - | Active | -
-Category | No | - | Active | -
-Client | Sí | Nombre (Documento) | NotDeleted | SoftDeletes
-Device | Sí | Tipo Marca Modelo (SN) | NotDeleted | SoftDeletes
-Service | Sí | #ID - Título (Status) | NotDeleted | SoftDeletes
-ServiceLog | Sí | Usuario:Status_old→Status_new | - | -
-ServicePhoto | Sí | Nombre (Tipo) | - | -
-Product | No | - | Active, NotDeleted | SoftDeletes
-Stock | No | - | - | -
-Sale | Sí | Nota #ID-Cliente(Documento)-Status | NotDeleted, Paid, Pending | SoftDeletes
-Item | No | - | - | -
-Payment | No | - | - | -
-Part | No | - | - | -
+| Modelo        | Accessor | Qué muestra                        | Scopes                    | Traits                                        |
+| ------------- | -------- | ---------------------------------- | ------------------------- | --------------------------------------------- |
+| User          | Sí       | Nombre (Rol)                       | -                         | HasFactory, Notifiable, SoftDeletes, HasRoles |
+| Type          | No       | -                                  | Active                    | -                                             |
+| Brand         | No       | -                                  | Active                    | -                                             |
+| Status        | No       | -                                  | Active                    | -                                             |
+| PaymentMethod | No       | -                                  | Active                    | -                                             |
+| Category      | No       | -                                  | Active                    | -                                             |
+| Client        | Sí       | Nombre (Documento)                 | NotDeleted                | SoftDeletes                                   |
+| Device        | Sí       | Tipo Marca Modelo (SN)             | NotDeleted                | SoftDeletes                                   |
+| Service       | Sí       | #ID - Título (Status)              | NotDeleted                | SoftDeletes                                   |
+| ServiceLog    | Sí       | Usuario:Status_old→Status_new      | -                         | -                                             |
+| ServicePhoto  | Sí       | Nombre (Tipo)                      | -                         | -                                             |
+| Product       | No       | -                                  | Active, NotDeleted        | SoftDeletes                                   |
+| Stock         | No       | -                                  | -                         | -                                             |
+| Sale          | Sí       | Nota #ID-Cliente(Documento)-Status | NotDeleted, Paid, Pending | SoftDeletes                                   |
+| Item          | No       | -                                  | -                         | -                                             |
+| Payment       | No       | -                                  | -                         | -                                             |
+| Part          | No       | -                                  | -                         | -                                             |
 
 ---
 
 ## 2. Notas importantes sobre modelos
 
-Imports a agregar en cada modelo: 
+Imports a agregar en cada modelo:
 
 Para modelos con scopes:
 
@@ -56,7 +56,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 ### Orden de implementación recomendado (modelos)
 
-FASE 1 – Catálogos (sin dependencias): 
+FASE 1 – Catálogos (sin dependencias):
 
 1. User (con accessor + HasRoles)
 2. Type (con scope Active)
@@ -65,23 +65,23 @@ FASE 1 – Catálogos (sin dependencias):
 5. PaymentMethod (con scope Active)
 6. Category (con scope Active)
 
-FASE 2 – Clientes y equipos: 
+FASE 2 – Clientes y equipos:
 
 7. Client (con accessor + SoftDeletes + scope NotDeleted)
 8. Device (con accessor + SoftDeletes + scope NotDeleted)
 
-FASE 3 – Taller: 
+FASE 3 – Taller:
 
 9. Service (con accessor + SoftDeletes + scope NotDeleted)
 10. ServiceLog (con accessor)
 11. ServicePhoto (con accessor + agregar `name` a `$fillable`)
 
-FASE 4 – Inventario: 
+FASE 4 – Inventario:
 
 12. Product (con scopes Active + NotDeleted)
 13. Stock (sin cambios)
 
-FASE 5 – Ventas: 
+FASE 5 – Ventas:
 
 14. Sale (con accessor + SoftDeletes + scopes NotDeleted, Paid, Pending)
 15. Item (sin cambios)
@@ -100,11 +100,11 @@ Validaciones:
 
 - Agregar FormRequest o Rules en los models si es necesario.
 
-Query optimization: 
+Query optimization:
 
 - Agregar `with()` en relaciones para eager loading en Filament.
 
-Campos adicionales: 
+Campos adicionales:
 
 - Device: considerar agregar `name` (ya está en `$fillable` de la migración).
 
@@ -123,14 +123,14 @@ php artisan make:filament-resource Brand --simple --attribute=name
 php artisan make:filament-resource Status --simple --attribute=name
 php artisan make:filament-resource PaymentMethod --simple --attribute=name
 php artisan make:filament-resource Category --simple --attribute=name
-``` 
+```
 
 ### FASE 2: Clientes y equipos
 
 ```bash
 php artisan make:filament-resource Client --generate --soft-deletes --attribute=title
 php artisan make:filament-resource Device --generate --soft-deletes --attribute=title
-``` 
+```
 
 ### FASE 3: Taller
 
@@ -138,14 +138,14 @@ php artisan make:filament-resource Device --generate --soft-deletes --attribute=
 php artisan make:filament-resource Service --generate --soft-deletes --attribute=title
 php artisan make:filament-resource ServiceLog --simple --attribute=title
 php artisan make:filament-resource ServicePhoto --simple --attribute=title
-``` 
+```
 
 ### FASE 4: Inventario
 
 ```bash
 php artisan make:filament-resource Product --generate --soft-deletes --attribute=name
 php artisan make:filament-resource Stock --simple --attribute=id
-``` 
+```
 
 ### FASE 5: Ventas
 
@@ -154,7 +154,7 @@ php artisan make:filament-resource Sale --generate --soft-deletes --attribute=ti
 php artisan make:filament-resource Item --simple --attribute=id
 php artisan make:filament-resource Payment --simple --attribute=id
 php artisan make:filament-resource Part --simple --attribute=id
-``` 
+```
 
 ### Script completo (ejecución por fases)
 
@@ -185,23 +185,23 @@ php artisan make:filament-resource Sale --generate --soft-deletes --attribute=ti
 php artisan make:filament-resource Item --simple --attribute=id && \
 php artisan make:filament-resource Payment --simple --attribute=id && \
 php artisan make:filament-resource Part --simple --attribute=id
-``` 
+```
 
 ---
 
 ## 4. Convenciones para el asistente
 
-Esta sección define cómo debe comportarse el asistente al trabajar con este repositorio y este documento. 
+Esta sección define cómo debe comportarse el asistente al trabajar con este repositorio y este documento.
 
-- Los modelos y Resources definidos en las fases (User, Type, Brand, Status, PaymentMethod, Category, Client, Device, Service, ServiceLog, ServicePhoto, Product, Stock, Sale, Item, Payment, Part) se consideran la fuente de verdad del proyecto. 
-- Si un Filament Resource de esa lista **no existe** todavía en el código, el asistente debe indicarlo explícitamente y sugerir el comando correspondiente de esta sección, por ejemplo:  
-  - `php artisan make:filament-resource Brand --simple --attribute=name`  
-  - `php artisan make:filament-resource Client --generate --soft-deletes --attribute=title`  
-  reutilizando siempre la variante exacta que aparece en “Comandos artisan finales”. 
+- Los modelos y Resources definidos en las fases (User, Type, Brand, Status, PaymentMethod, Category, Client, Device, Service, ServiceLog, ServicePhoto, Product, Stock, Sale, Item, Payment, Part) se consideran la fuente de verdad del proyecto.
+- Si un Filament Resource de esa lista **no existe** todavía en el código, el asistente debe indicarlo explícitamente y sugerir el comando correspondiente de esta sección, por ejemplo:
+    - `php artisan make:filament-resource Brand --simple --attribute=name`
+    - `php artisan make:filament-resource Client --generate --soft-deletes --attribute=title`  
+      reutilizando siempre la variante exacta que aparece en “Comandos artisan finales”.
 - Si el Filament Resource **ya existe**, el asistente debe trabajar directamente sobre él sin pedir que se pegue el código completo, describiendo únicamente los cambios a realizar, tales como:
-  - Definir o ajustar `protected static ?string $modelLabel` y `protected static ?string $pluralModelLabel` en español neutro.
-  - Ajustar textos de navegación (grupo, icono, orden).
-  - Ajustar el formulario (`form()`) y la tabla (`table()`), indicando qué campos agregar, mostrar, ocultar o hacer obligatorios.
+    - Definir o ajustar `protected static ?string $modelLabel` y `protected static ?string $pluralModelLabel` en español neutro.
+    - Ajustar textos de navegación (grupo, icono, orden).
+    - Ajustar el formulario (`form()`) y la tabla (`table()`), indicando qué campos agregar, mostrar, ocultar o hacer obligatorios.
 
 ### Reglas específicas para Resources
 
@@ -216,15 +216,16 @@ Esta sección define cómo debe comportarse el asistente al trabajar con este re
 Para mantener una navegación consistente en el panel:
 
 - Agrupar los Resources en grupos de navegación alineados con las fases de este documento, por ejemplo:
-  - “Catálogos” (User, Type, Brand, Status, PaymentMethod, Category).
-  - “Clientes y equipos” (Client, Device).
-  - “Taller” (Service, ServiceLog, ServicePhoto).
-  - “Inventario” (Product, Stock).
-  - “Ventas” (Sale, Item, Payment, Part).
+    - “Catálogos” (User, Type, Brand, Status, PaymentMethod, Category).
+    - “Clientes y equipos” (Client, Device).
+    - “Taller” (Service, ServiceLog, ServicePhoto).
+    - “Inventario” (Product, Stock).
+    - “Ventas” (Sale, Item, Payment, Part).
 - Respetar el mismo orden de fases al ordenar los grupos y los Resources dentro del panel.
 - Usar labels en español neutro para los grupos y Resources, evitando términos demasiado locales si no están documentados en este archivo.
 
 ---
+
 ## 6. Estilo de respuestas del asistente
 
 - El asistente debe **proponer el código completo final** de cada Resource o sección que esté ajustando (por ejemplo, clase `ClientResource` completa, o al menos el bloque completo de propiedades estáticas + métodos `form()` y `table()`), no solo fragmentos sueltos.
@@ -233,12 +234,22 @@ Para mantener una navegación consistente en el panel:
 - La explicación debe ser breve y directa, describiendo los cambios clave (labels, navegación, columnas, filtros, etc.) sin extenderse en teoría general.
 - Debe seguir estrictamente las fases, el “Estado actual” y el “Siguiente paso” definidos en este archivo, sin saltar a otras partes del proyecto.
 - Para patrones y buenas prácticas de Filament y Laravel, debe usar como referencia:
-  - `https://demo.filamentphp.com/`
-  - `https://filamentphp.com/docs/4.x/getting-started`
-  - `https://laravel.com/docs/12.x`
-  usando estas fuentes solo como guía de estructura y estilo, sin copiar código literal.
+    - `https://demo.filamentphp.com/`
+    - `https://filamentphp.com/docs/4.x/getting-started`
+    - `https://laravel.com/docs/12.x`
+      usando estas fuentes solo como guía de estructura y estilo, sin copiar código literal.
 
-## 7. Estado actual
+    ## 7. Reglas de inspección del repositorio
+
+- Antes de afirmar que un modelo o Resource “no existe”, el asistente debe:
+    - Revisar el árbol completo de `app/Models` y `app/Filament/Resources` incluyendo sus subcarpetas.
+    - Buscar específicamente rutas como:
+        - `app/Filament/Resources/Clients/ClientResource.php`
+        - `app/Filament/Resources/Devices/DeviceResource.php`
+    - Solo si después de revisar estas rutas no encuentra el archivo, puede sugerir crearlo con `php artisan make:filament-resource ...`.
+- Si el archivo sí existe en el repositorio, el asistente **no debe** decir que “no existe” ni sugerir crearlo; debe trabajar sobre la versión existente y proponer el código completo ajustado.
+
+## 8. Estado actual
 
 Fase actual: **Fase 2 – Clientes y equipos**.
 
@@ -252,7 +263,6 @@ Siguiente paso: **Revisar y homogeneizar los Resources de Client y Device según
 El asistente debe continuar desde este siguiente paso, eligiendo un Resource concreto (por ejemplo `BrandResource`) y proponiendo los ajustes necesarios según las convenciones de este documento, sin salirse de lo aquí definido.
 
 ---
-
 
 <!-- Proyecto: https://github.com/drfoxsoscomputer/servicio-tecnico
 El contexto, reglas, fases y estado actual están en docs/assistant-context.md del repo.
