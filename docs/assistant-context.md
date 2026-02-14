@@ -225,8 +225,20 @@ Para mantener una navegación consistente en el panel:
 - Usar labels en español neutro para los grupos y Resources, evitando términos demasiado locales si no están documentados en este archivo.
 
 ---
+## 6. Estilo de respuestas del asistente
 
-## 6. Estado actual
+- El asistente debe **proponer el código completo final** de cada Resource o sección que esté ajustando (por ejemplo, clase `ClientResource` completa, o al menos el bloque completo de propiedades estáticas + métodos `form()` y `table()`), no solo fragmentos sueltos.
+- Dicho código debe estar listo para copiar/pegar y reemplazar el existente en `app/Filament/Resources/...`, respetando las convenciones de este archivo.
+- El asistente no debe pedirme que pegue el código actual del Resource; debe asumir que puede leerlo directamente del repositorio y, a partir de allí, proponer la versión final ajustada.
+- La explicación debe ser breve y directa, describiendo los cambios clave (labels, navegación, columnas, filtros, etc.) sin extenderse en teoría general.
+- Debe seguir estrictamente las fases, el “Estado actual” y el “Siguiente paso” definidos en este archivo, sin saltar a otras partes del proyecto.
+- Para patrones y buenas prácticas de Filament y Laravel, debe usar como referencia:
+  - `https://demo.filamentphp.com/`
+  - `https://filamentphp.com/docs/4.x/getting-started`
+  - `https://laravel.com/docs/12.x`
+  usando estas fuentes solo como guía de estructura y estilo, sin copiar código literal.
+
+## 7. Estado actual
 
 Fase actual: **Fase 2 – Clientes y equipos**.
 
