@@ -112,7 +112,7 @@ Campos adicionales:
 
 ## 3. Comandos artisan finales (Filament Resources)
 
-Estos comandos definen cómo deben generarse los Filament Resources para cada modelo, organizados por fases. 
+Estos comandos definen cómo deben generarse los Filament Resources para cada modelo, organizados por fases.
 
 ### FASE 1: Catálogos
 
@@ -203,15 +203,14 @@ Esta sección define cómo debe comportarse el asistente al trabajar con este re
     - Ajustar textos de navegación (grupo, icono, orden).
     - Ajustar el formulario (`form()`) y la tabla (`table()`), indicando qué campos agregar, mostrar, ocultar o hacer obligatorios.
 - El asistente debe considerar este archivo como fuente de verdad. Si hay conflicto entre:
-  - lo que “asuma” del código y
-  - lo que dice este documento (tabla de modelos, traits, scopes, SoftDeletes, comandos artisan, etc.),
-  **siempre debe prevalecer este documento**.
+    - lo que “asuma” del código y
+    - lo que dice este documento (tabla de modelos, traits, scopes, SoftDeletes, comandos artisan, etc.),
+      **siempre debe prevalecer este documento**.
 - Al proponer código para un Resource que ya existe (por ejemplo `ClientResource` o `DeviceResource`), el asistente debe:
-  - Respetar el modelo, scopes y traits definidos en la tabla de modelos.
-  - Respetar la estructura generada por los comandos artisan indicados.
-  - Ajustar solo lo necesario (labels, navegación, columnas, filtros) sin eliminar rasgos importantes (SoftDeletes, scopes, relaciones).
+    - Respetar el modelo, scopes y traits definidos en la tabla de modelos.
+    - Respetar la estructura generada por los comandos artisan indicados.
+    - Ajustar solo lo necesario (labels, navegación, columnas, filtros) sin eliminar rasgos importantes (SoftDeletes, scopes, relaciones).
 - El asistente no debe reescribir completamente una clase existente “desde cero” ignorando el código ya generado, salvo que este documento lo pida explícitamente.
-
 
 ### Reglas específicas para Resources
 
@@ -249,7 +248,7 @@ Para mantener una navegación consistente en el panel:
     - `https://laravel.com/docs/12.x`
       usando estas fuentes solo como guía de estructura y estilo, sin copiar código literal.
 
-    ## 7. Reglas de inspección del repositorio
+## 7. Reglas de inspección del repositorio
 
 - Antes de afirmar que un modelo o Resource “no existe”, el asistente debe:
     - Revisar el árbol completo de `app/Models` y `app/Filament/Resources` incluyendo sus subcarpetas.
@@ -272,11 +271,23 @@ Siguiente paso: **Revisar y homogeneizar los Resources de Client y Device según
 
 El asistente debe continuar desde este siguiente paso, eligiendo un Resource concreto (por ejemplo `BrandResource`) y proponiendo los ajustes necesarios según las convenciones de este documento, sin salirse de lo aquí definido.
 
+## 9. Actualización de la fase al finalizar
+
+- Cuando el asistente considere que **la fase actual está completada** según los criterios de este documento, debe:
+  - Indicar explícitamente que la fase se puede dar por terminada.
+  - Proponer el texto concreto con el que debería actualizarse la sección **“8. Estado actual”** de este archivo, incluyendo:
+    - Nueva `Fase actual` (por ejemplo: “Fase 3 – Taller”).
+    - Nuevo `Siguiente paso` claro y específico (por ejemplo: “Revisar y homogeneizar ServiceResource según las convenciones definidas”).
+- El asistente no debe asumir cambios de fase sin proponer primero esta actualización del documento.
+
+
 ---
 
-<!-- Proyecto: https://github.com/drfoxsoscomputer/servicio-tecnico
+<!--
+Proyecto: https://github.com/drfoxsoscomputer/servicio-tecnico
 El contexto, reglas, fases y estado actual están en docs/assistant-context.md del repo.
 Actúa siguiendo ese archivo (no inventes nada fuera de lo que ahí se define) y continúa desde la fase y el “siguiente paso” que allí se indique.
 No inventes estructuras nuevas de Resources desde cero.
 Parte del código existente en el repo y ajústalo para cumplir este assistant-context.md.
-Si tu propuesta contradice la tabla de modelos, traits o scopes de este documento, está mal. -->
+Si tu propuesta contradice la tabla de modelos, traits o scopes de este documento, está mal.
+-->
