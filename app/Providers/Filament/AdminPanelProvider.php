@@ -34,7 +34,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationGroups([
                 'Tienda',
-                'Equipos',
+                'Configuración',
                 'Seguridad',
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')

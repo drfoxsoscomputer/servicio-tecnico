@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Users\Schemas;
 
 use Filament\Facades\Filament;
-use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
@@ -39,7 +38,7 @@ class UserForm
                         name: 'roles',
                         titleAttribute: 'name',
                         modifyQueryUsing: function (Builder $query) {
-                            /** @var User|null $user */
+                            /** @var \App\Models\User|null $user */
                             $user = Filament::auth()->user();
 
                             if ($user && $user->hasRole('super_admin')) {
