@@ -20,8 +20,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
-use Symfony\Component\Console\Color;
-use UnitEnum;
+// use UnitEnum;
 
 class StatusResource extends Resource
 {
@@ -29,11 +28,13 @@ class StatusResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Tienda';
+    protected static string | \UnitEnum | null $navigationGroup = 'Configuración';
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    protected static ?string $modelLabel = 'estado';
 
+    protected static ?string $navigationLabel = 'Estados de servicios';
 
     public static function form(Schema $schema): Schema
     {

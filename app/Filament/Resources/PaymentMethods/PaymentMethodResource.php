@@ -18,7 +18,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
-use UnitEnum;
+// use UnitEnum;
 
 class PaymentMethodResource extends Resource
 {
@@ -26,11 +26,11 @@ class PaymentMethodResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Tienda';
+    protected static string | \UnitEnum | null $navigationGroup = 'Configuración';
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?string $modelLabel = 'Método de pago';
+    protected static ?string $modelLabel = 'método de pago';
 
     public static function form(Schema $schema): Schema
     {

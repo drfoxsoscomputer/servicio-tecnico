@@ -17,13 +17,13 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use UnitEnum;
+// use UnitEnum;
 
 class DeviceResource extends Resource
 {
     protected static ?string $model = Device::class;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Equipos';
+    // protected static string|UnitEnum|null $navigationGroup = 'Equipos';
 
     // protected static ?string $navigationLabel = 'Equipos';
 
