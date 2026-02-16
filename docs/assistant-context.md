@@ -260,13 +260,16 @@ Para mantener una navegación consistente en el panel:
 
 ## 8. Estado actual
 
-- Fase actual: **Fase 3 – Catálogos y tablas simples**
+- Fase actual: **Fase 4 – Ventas en tienda**
 - Siguiente paso:
-  - Revisar y homogeneizar `BrandResource` (recurso simple) según las convenciones definidas en este documento:
-    - Usar labels en español neutro (`modelLabel`, `pluralModelLabel`, `navigationLabel`).
-    - Ubicarlo en el grupo de navegación correspondiente a catálogos / configuración básica, respetando el orden de fases.
-    - Definir columnas básicas en la tabla (por ejemplo: nombre / título, `created_at`, `updated_at` como columnas toggleables).
-    - Incluir filtros o acciones solo si están respaldados por la tabla de modelos / scopes de este documento.
+  - Definir y homogeneizar `SaleResource` (ventas en mostrador) según las convenciones de este documento:
+    - Usar el modelo `Sale` definido en `database.dbml`, respetando sus relaciones con `Client`, `User`, `Item`, `Payment` y `Service` cuando aplique.
+    - Elegir la estructura adecuada de resource (completo, con Pages y, si es necesario, Relation Managers para ítems de venta y pagos).
+    - Usar labels en español neutro (`modelLabel`, `pluralModelLabel`, `navigationLabel`) y un grupo de navegación coherente con el área de ventas.
+    - Incluir en la tabla columnas clave (cliente, total, fecha, estado, usuario que registra) y `created_at` / `updated_at` como columnas toggleables.
+    - Respetar los traits, scopes y relaciones definidos para `Sale`, `Item`, `Payment`, `Product` y tablas relacionadas en `database.dbml`.
+
+
 
 ## 9. Actualización de la fase al finalizar
 
