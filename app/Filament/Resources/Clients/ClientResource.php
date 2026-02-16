@@ -25,11 +25,13 @@ class ClientResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    // protected static string |\UnitEnum | null $navigationGroup = 'Clientes y equipos';
+
+    protected static ?int $navigationSort = 10;
+
+    protected static ?string $modelLabel = 'cliente';
+
     protected static ?string $recordTitleAttribute = 'title';
-
-    protected static ?string $modelLabel = 'Cliente';
-
-    // protected static string |\UnitEnum | null $navigationGroup = 'Clientes';
 
     public static function form(Schema $schema): Schema
     {

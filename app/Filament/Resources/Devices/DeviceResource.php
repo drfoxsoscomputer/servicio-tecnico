@@ -24,14 +24,16 @@ class DeviceResource extends Resource
     protected static ?string $model = Device::class;
 
     protected static string|UnitEnum|null $navigationGroup = 'Equipos';
+
     // protected static ?string $navigationLabel = 'Equipos';
-    // protected static ?int $navigationSort = 2;
+
+    protected static ?int $navigationSort = 20;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $recordTitleAttribute = 'title';
 
-    protected static ?string $modelLabel = 'Equipo';
+    protected static ?string $modelLabel = 'equipo';
 
     public static function form(Schema $schema): Schema
     {
