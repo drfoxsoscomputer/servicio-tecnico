@@ -260,22 +260,19 @@ Para mantener una navegación consistente en el panel:
 
 ## 8. Estado actual
 
-Fase actual: **Fase 2 – Clientes y equipos**.
-
-Siguiente paso: **Revisar y homogeneizar los Resources de Client y Device según las convenciones de este documento**, asegurando que:
-
-- Ambos Resources existen y usan labels y `modelLabel` / `pluralModelLabel` coherentes en español neutro.
-- Están ubicados en un grupo de navegación adecuado (por ejemplo, “Clientes y equipos”), respetando el orden de fases.
-- Sus tablas incluyen `created_at` y `updated_at` como columnas ocultables (toggleables).
-- Incluyen `TrashedFilter` porque sus modelos usan `SoftDeletes`, de acuerdo con la tabla de modelos.
-
-El asistente debe continuar desde este siguiente paso, eligiendo un Resource concreto (por ejemplo `BrandResource`) y proponiendo los ajustes necesarios según las convenciones de este documento, sin salirse de lo aquí definido.
+- Fase actual: **Fase 3 – Catálogos y tablas simples**
+- Siguiente paso:
+  - Revisar y homogeneizar `BrandResource` (recurso simple) según las convenciones definidas en este documento:
+    - Usar labels en español neutro (`modelLabel`, `pluralModelLabel`, `navigationLabel`).
+    - Ubicarlo en el grupo de navegación correspondiente a catálogos / configuración básica, respetando el orden de fases.
+    - Definir columnas básicas en la tabla (por ejemplo: nombre / título, `created_at`, `updated_at` como columnas toggleables).
+    - Incluir filtros o acciones solo si están respaldados por la tabla de modelos / scopes de este documento.
 
 ## 9. Actualización de la fase al finalizar
 
 - Cuando el asistente considere que **la fase actual está completada** según los criterios de este documento, debe:
   - Indicar explícitamente que la fase se puede dar por terminada.
-  - Proponer el texto concreto con el que debería actualizarse la sección **“8. Estado actual”** de este archivo, incluyendo:
+  - Proponer el texto concreto con el que debería actualizarse la sección **“. Estado actual”** de este archivo, incluyendo:
     - Nueva `Fase actual` (por ejemplo: “Fase 3 – Taller”).
     - Nuevo `Siguiente paso` claro y específico (por ejemplo: “Revisar y homogeneizar ServiceResource según las convenciones definidas”).
 - El asistente no debe asumir cambios de fase sin proponer primero esta actualización del documento.
