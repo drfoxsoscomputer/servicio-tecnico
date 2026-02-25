@@ -26,6 +26,10 @@ class SaleResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'title';
 
+    protected static ?string $modelLabel = 'venta';
+
+    protected static string |\UnitEnum|null $navigationGroup = 'Ventas';
+
     public static function form(Schema $schema): Schema
     {
         return SaleForm::configure($schema);

@@ -54,6 +54,11 @@ class Sale extends Model
         return $this->hasMany(Payment::class);
     }
 
+    public function status(): BelongsTo
+    {
+        return $this->belongsTo(Status::class);
+    }
+
     // ===== SCOPES =====
 
     public function scopeNotDeleted(Builder $query): Builder

@@ -9,6 +9,7 @@ use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
@@ -18,36 +19,71 @@ class SalesTable
     {
         return $table
             ->columns([
+                TextColumn::make('title')
+                    ->label('Nota')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('client.name')
+                    ->label('Cliente')
                     ->searchable(),
                 TextColumn::make('user.name')
+                    ->label('Cajero')
                     ->searchable(),
                 TextColumn::make('service.title')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('type')
-                    ->searchable(),
+                    ->label('Tipo')
+                    ->badge()
+                    ->colors([
+                        'success' => 'sale',
+                        'info' => 'service',
+                    ])
+                    ->sortable(),
                 TextColumn::make('net_amount')
-                    ->numeric()
-                    ->sortable(),
+                    ->label('Neto')
+                    ->money('usd')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('discount_type')
-                    ->searchable(),
+                    ->label('Tipo desc.')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('discount_value')
+                    ->label('Valor desc.')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('discount_amount')
-                    ->numeric()
-                    ->sortable(),
+                    ->label('Descuento')
+                    ->money('usd')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('tax_percentage')
+                    ->label('% Imp.')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('tax_amount')
-                    ->numeric()
-                    ->sortable(),
+                    ->label('Impuesto')
+                    ->money('usd')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('total_amount')
-                    ->numeric()
-                    ->sortable(),
+                    ->label('Total')
+                    ->money('usd')
+                    ->sortable()
+                    ->alignRight(),
                 TextColumn::make('status')
-                    ->searchable(),
+                    ->label('Estado')
+                    ->badge()
+                    ->colors([
+                        'gray' => 'draft',
+                        'warning' => 'pending',
+                        'success' => 'paid',
+                        'danger' => 'cancelled',
+                    ])
+                    ->sortable(),
                 TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
@@ -62,8 +98,18 @@ class SalesTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                SelectFilter::make('status_id')
+                    ->label('Estado')
+                    ->relationship('status', 'name'),
+                SelectFilter::make('type')
+                    ->label('Tipo')
+                    ->options([
+                        'sale' => 'Venta',
+                        'service' => 'Servicio',
+                    ]),
                 TrashedFilter::make(),
             ])
+            ->defaultSort('created_at', 'desc')
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
