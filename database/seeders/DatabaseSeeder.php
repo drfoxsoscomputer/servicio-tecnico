@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // User::factory(10)->create();
-        $this->command->call('shield:generate', ['--all' => true]);
+        $this->command->call('shield:generate', ['--all' => true, '--ignore-existing-policies' => true]);
 
         $user = User::create([
             'name' => 'Administrador',
