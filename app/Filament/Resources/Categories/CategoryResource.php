@@ -43,6 +43,9 @@ class CategoryResource extends Resource
                     ->maxLength(255),
                 Toggle::make('is_active')
                     ->label('Activo')
+                    ->inline(false)
+                    ->onIcon(Heroicon::Check)
+                    ->offIcon(Heroicon::XMark)
                     ->default(true),
             ]);
     }
