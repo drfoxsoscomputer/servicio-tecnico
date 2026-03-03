@@ -137,6 +137,17 @@ Table products {
   updated_at datetime
 }
 
+Table product_images {
+  id int [pk, increment]
+  product_id int
+  path varchar(255) [note: 'ruta de la imagen']
+  position int [default: 0, note: 'orden de la imagen']
+  is_main boolean [default: false, note: 'si es la imagen principal']
+  created_at datetime
+  updated_at datetime
+}
+
+
 Table parts {
   id int [pk, increment]
   service_id int
@@ -223,6 +234,7 @@ Ref: service_logs.user_id > users.id
 Ref: service_photos.service_id > services.id
 
 Ref: products.category_id > categories.id
+Ref: product_images.product_id > products.id
 Ref: parts.service_id > services.id
 Ref: parts.product_id > products.id
 
@@ -241,4 +253,4 @@ Ref: payments.payment_method_id > payment_methods.id
 // 1) users, types, brands, statuses, payment_methods, categories
 // 2) clients, devices
 // 3) services, service_logs, service_photos
-// 4) products, sales, items, payments, parts, stocks
+// 4) products, product_images, sales, items, payments, parts, stocks
