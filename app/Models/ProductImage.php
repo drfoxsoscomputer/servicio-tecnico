@@ -11,7 +11,6 @@ class ProductImage extends Model
         'product_id',
         'path',
         'position',
-        'is_main',
     ];
 
     // ===== RELACIONES =====

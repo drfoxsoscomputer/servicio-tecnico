@@ -142,7 +142,6 @@ Table product_images {
   product_id int
   path varchar(255) [note: 'ruta de la imagen']
   position int [default: 0, note: 'orden de la imagen']
-  is_main boolean [default: false, note: 'si es la imagen principal']
   created_at datetime
   updated_at datetime
 }
