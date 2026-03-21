@@ -20,16 +20,15 @@ class ProductsTable
     {
         return $table
             ->columns([
-                TextColumn::make('name')
-                    ->label('Nombre')
-                    ->searchable(),
                 ImageColumn::make('images.path')
                     ->label('Imágen')
                     ->imageSize(50)
                     ->limit(1)
-                    // ->stacked()
-                    // ->wrap()
                     ->square(),
+                TextColumn::make('name')
+                    ->label('Nombre')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('category.name')
                     ->label('Categoría')
                     ->searchable(),
@@ -39,14 +38,17 @@ class ProductsTable
                 TextColumn::make('barcode')
                     ->label('Código de barras')
                     ->searchable(),
-                TextColumn::make('cost_price')
-                    ->label('Precio de costo')
-                    ->money('usd')
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('sale_price')
-                    ->label('Precio de venta')
-                    ->money('usd')
+                TextColumn::make('price_bs')
+                    ->label('Precio Bs')
+                    ->money('VES')
                     ->sortable(),
+                TextColumn::make('price_usd')
+                    ->label('Precio USD')
+                    ->money('USD')
+                    ->sortable(),
+                IconColumn::make('has_variants')
+                    ->label('Variantes')
+                    ->boolean(),
                 IconColumn::make('is_active')
                     ->label('Activo')
                     ->boolean(),

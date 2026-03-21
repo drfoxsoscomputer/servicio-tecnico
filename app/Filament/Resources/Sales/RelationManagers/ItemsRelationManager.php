@@ -17,7 +17,6 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
-use Filament\Support\Icons\Heroicon;
 use Filament\Support\RawJs;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -41,7 +40,7 @@ class ItemsRelationManager extends RelationManager
                         if ($state) {
                             $product = Product::find($state);
                             if ($product) {
-                                $set('unit_price', $product->sale_price);
+                                $set('unit_price', $product->price_usd);
                             }
                         }
                     }),
@@ -52,7 +51,7 @@ class ItemsRelationManager extends RelationManager
                     ->default(1)
                     ->required(),
                 TextInput::make('unit_price')
-                    ->label('Precio Unitario')
+                    ->label('Precio Unitario (USD)')
                     ->mask(RawJs::make('$money($input)'))
                     ->stripCharacters(',')
                     ->numeric()
@@ -66,8 +65,8 @@ class ItemsRelationManager extends RelationManager
             ->components([
                 TextEntry::make('product.name')->label('Producto'),
                 TextEntry::make('quantity')->label('Cantidad'),
-                TextEntry::make('unit_price')->label('Precio Unitario')->money('usd'),
-                TextEntry::make('subtotal')->label('Subtotal')->money('usd'),
+                TextEntry::make('unit_price')->label('Precio Unitario')->money('USD'),
+                TextEntry::make('subtotal')->label('Subtotal')->money('USD'),
             ]);
     }
 
@@ -84,12 +83,12 @@ class ItemsRelationManager extends RelationManager
                     ->label('Cantidad')
                     ->sortable(),
                 TextColumn::make('unit_price')
-                    ->label('Precio')
-                    ->money('usd')
+                    ->label('Precio USD')
+                    ->money('USD')
                     ->sortable(),
                 TextColumn::make('subtotal')
                     ->label('Subtotal')
-                    ->money('usd')
+                    ->money('USD')
                     ->sortable(),
             ])
             ->filters([

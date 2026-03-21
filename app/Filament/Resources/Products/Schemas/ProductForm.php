@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Products\Schemas;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
@@ -19,7 +20,11 @@ class ProductForm
             ->components([
                 TextInput::make('name')
                     ->label('Nombre')
-                    ->required(),
+                    ->required()
+                    ->maxLength(150),
+                Textarea::make('description')
+                    ->label('Descripción')
+                    ->rows(3),
                 Select::make('category_id')
                     ->label('Categoría')
                     ->relationship('category', 'name')
@@ -44,29 +49,34 @@ class ProductForm
                     ->maxLength(100),
                 TextInput::make('barcode')
                     ->label('Código de barras')
-                    ->maxLength(255),
-                TextInput::make('cost_price')
-                    ->label('Precio de costo')
+                    ->maxLength(100),
+                TextInput::make('price_bs')
+                    ->label('Precio Bs')
                     ->mask(RawJs::make('$money($input)'))
                     ->stripCharacters(',')
                     ->numeric()
+                    ->required()
                     ->placeholder('1,234.50')
-                    ->prefix('$')
-                    ->dehydrateStateUsing(fn($state) => $state === null || $state === '' ? 0 : $state),
-                TextInput::make('sale_price')
-                    ->label('Precio de venta')
+                    ->prefix('Bs '),
+                TextInput::make('price_usd')
+                    ->label('Precio USD')
                     ->mask(RawJs::make('$money($input)'))
                     ->stripCharacters(',')
-                    ->required()
                     ->numeric()
                     ->placeholder('1,234.50')
                     ->prefix('$'),
+                Toggle::make('has_variants')
+                    ->label('¿Tiene variantes? (colores, tallas)')
+                    ->inline(false)
+                    ->onIcon(Heroicon::Check)
+                    ->offIcon(Heroicon::XMark)
+                    ->default(false),
                 Toggle::make('is_active')
                     ->label('Activo')
                     ->inline(false)
                     ->onIcon(Heroicon::Check)
                     ->offIcon(Heroicon::XMark)
-                    ->default(false),
+                    ->default(true),
                 Repeater::make('images')
                     ->label('Imágenes')
                     ->helperText('La primera imagen será la principal.')
@@ -80,11 +90,9 @@ class ProductForm
                             ->label('Imágen')
                             ->image()
                             ->directory('products'),
-
                     ])
                     ->columnSpanFull()
                     ->addActionLabel('+'),
             ]);
-            dd($data);
     }
 }
