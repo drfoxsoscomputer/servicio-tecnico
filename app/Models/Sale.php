@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\DiscountType;
+use App\Enums\SaleStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,18 +23,31 @@ class Sale extends Model
     }
 
     protected $fillable = [
+        'invoice_number',
+        'ticket_id',
         'client_id',
         'user_id',
-        'service_id',
         'type',
-        'net_amount',
+        'subtotal',
         'discount_type',
         'discount_value',
         'discount_amount',
-        'tax_percentage',
-        'tax_amount',
-        'total_amount',
+        'total_bs',
+        'total_usd',
+        'exchange_rate',
         'status',
+        'notes',
+    ];
+
+    protected $casts = [
+        'discount_type' => DiscountType::class,
+        'status' => SaleStatus::class,
+        'subtotal' => 'decimal:2',
+        'discount_value' => 'decimal:2',
+        'discount_amount' => 'decimal:2',
+        'total_bs' => 'decimal:2',
+        'total_usd' => 'decimal:2',
+        'exchange_rate' => 'decimal:2',
     ];
 
     // ===== RELACIONES =====
@@ -47,99 +62,71 @@ class Sale extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function service(): BelongsTo
+    public function ticket(): BelongsTo
     {
-        return $this->belongsTo(Service::class);
+        return $this->belongsTo(ServiceTicket::class, 'ticket_id');
     }
 
     public function items(): HasMany
     {
-        return $this->hasMany(Item::class);
+        return $this->hasMany(SaleItem::class);
     }
 
     public function payments(): HasMany
     {
-        return $this->hasMany(Payment::class);
-    }
-
-    public function status(): BelongsTo
-    {
-        return $this->belongsTo(Status::class);
+        return $this->hasMany(SalePayment::class);
     }
 
     // ===== SCOPES =====
 
-    public function scopeNotDeleted(Builder $query): Builder
-    {
-        return $query->whereNull('deleted_at');
-    }
-
-    public function scopePaid(Builder $query): Builder
-    {
-        return $query->where('status', 'paid');
-    }
-
     public function scopePending(Builder $query): Builder
     {
-        return $query->where('status', 'pending');
+        return $query->where('status', SaleStatus::PENDING);
+    }
+
+    public function scopeCompleted(Builder $query): Builder
+    {
+        return $query->where('status', SaleStatus::COMPLETED);
+    }
+
+    public function scopeByDateRange(Builder $query, $from, $to): Builder
+    {
+        return $query->whereBetween('created_at', [$from, $to]);
+    }
+
+    public function scopeByClient(Builder $query, $clientId): Builder
+    {
+        return $query->where('client_id', $clientId);
     }
 
     // ===== ACCESSORS =====
 
     public function getTitleAttribute(): string
     {
-        $client = $this->client->name ?? 'N/A';
-        $doc = $this->client->document_id ?? 'N/A';
-
-        return "Nota #{$this->id} - {$client} {$doc} - ({$this->status})";
-    }
-
-    public function getSubtotalAttribute(): float
-    {
-        return $this->getCalculationService()->calculateNetAmount($this);
-    }
-
-    public function getDiscountAmountAttribute(): float
-    {
-        return $this->getCalculationService()->calculateDiscountAmount($this, $this->subtotal);
-    }
-
-    public function getTaxableAmountAttribute(): float
-    {
-        return $this->subtotal - $this->discount_amount;
-    }
-
-    public function getTaxAmountAttribute(): float
-    {
-        return $this->getCalculationService()->calculateTaxAmount($this, $this->taxable_amount);
-    }
-
-    public function getTotalAmountAttribute(): float
-    {
-        return $this->taxable_amount + $this->tax_amount;
+        return "Factura #{$this->invoice_number}";
     }
 
     public function getPaidAmountAttribute(): float
     {
-        return $this->payments->sum('amount');
+        return (float) $this->payments->sum('amount');
     }
 
     public function getPendingAmountAttribute(): float
     {
-        return max(0, $this->total_amount - $this->paid_amount);
+        return max(0, (float) $this->total_bs - $this->paid_amount);
     }
 
-    public function getSaleStatusAttribute(): string
+    public function getSaleStatusAttribute(): SaleStatus
     {
-        if ($this->paid_amount >= $this->total_amount && $this->total_amount > 0) {
-            return 'paid';
+        if ($this->paid_amount >= $this->total_bs && $this->total_bs > 0) {
+            return SaleStatus::COMPLETED;
         }
 
         if ($this->paid_amount > 0) {
-            return 'partial';
+            return SaleStatus::PARTIAL;
         }
 
-        return $this->status ?? 'pending';
+        return SaleStatus::PENDING;
     }
 
     // ===== METHODS =====

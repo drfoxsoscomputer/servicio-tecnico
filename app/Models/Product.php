@@ -15,11 +15,22 @@ class Product extends Model
     protected $fillable = [
         'category_id',
         'name',
+        'description',
         'sku',
         'barcode',
-        'cost_price',
-        'sale_price',
+        'price_bs',
+        'price_usd',
+        'has_variants',
+        'has_inventory',
         'is_active',
+    ];
+
+    protected $casts = [
+        'price_bs' => 'decimal:2',
+        'price_usd' => 'decimal:2',
+        'has_variants' => 'boolean',
+        'has_inventory' => 'boolean',
+        'is_active' => 'boolean',
     ];
 
     // ===== RELACIONES =====
@@ -29,25 +40,24 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function parts(): HasMany
+    public function variants(): HasMany
     {
-        return $this->hasMany(Part::class);
+        return $this->hasMany(ProductVariant::class);
     }
 
-    public function items(): HasMany
+    public function presentations(): HasMany
     {
-        return $this->hasMany(Item::class);
+        return $this->hasMany(ProductPresentation::class);
     }
 
     public function stocks(): HasMany
     {
-        return $this->hasMany(Stock::class);
+        return $this->hasMany(ProductStock::class);
     }
 
     public function images(): HasMany
     {
-        return $this->hasMany(ProductImage::class)
-            ->orderBy('position');
+        return $this->hasMany(ProductImage::class);
     }
 
     // ===== SCOPES =====
@@ -57,8 +67,8 @@ class Product extends Model
         return $query->where('is_active', true);
     }
 
-    public function scopeNotDeleted(Builder $query): Builder
+    public function scopeByBrand(Builder $query, $brandId): Builder
     {
-        return $query->whereNull('deleted_at');
+        return $query->where('category_id', $brandId);
     }
 }

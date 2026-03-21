@@ -5,21 +5,26 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Payment extends Model
+class SalePayment extends Model
 {
+    protected $table = 'sale_payments';
+
     protected $fillable = [
         'sale_id',
         'payment_method_id',
-        'note',
         'amount',
+        'amount_usd',
+        'reference',
         'paid_at',
     ];
 
-    // ===== RELACIONES =====
-
     protected $casts = [
+        'amount' => 'decimal:2',
+        'amount_usd' => 'decimal:2',
         'paid_at' => 'datetime',
     ];
+
+    // ===== RELACIONES =====
 
     public function sale(): BelongsTo
     {
