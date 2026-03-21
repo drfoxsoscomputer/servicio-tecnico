@@ -1,6 +1,6 @@
 // ================================================
 // SERVICIO TÉCNICO - ESTRUCTURA DE BASE DE DATOS
-// Actualizado: 2026-03-21
+// Actualizado: 2026-03-21 (Auditoría Fase 1)
 // ================================================
 
 // ================================================
@@ -106,6 +106,16 @@ Table bcv_rates {
 // 4. CLIENTES Y DISPOSITIVOS
 // ================================================
 
+// Tipos de dispositivos
+Table device_types {
+  id int [pk, increment]
+  name varchar(50) [note: 'Celular, Laptop, Tablet, PC Escritorio, Consola, Otro']
+  icon varchar(50) [null]
+  is_active boolean [default: true]
+  created_at datetime
+  updated_at datetime
+}
+
 Table clients {
   id int [pk, increment]
   name varchar(150)
@@ -123,9 +133,9 @@ Table clients {
 Table devices {
   id int [pk, increment]
   client_id int
+  device_type_id int
   brand_id int
-  type varchar(50) [note: 'Teléfono, Laptop, Tablet, etc.']
-  model varchar(100)
+  model varchar(100) [note: 'string libre, ej: Galaxy S21, iPhone 15']
   serial varchar(100) [null, note: 'IMEI, número de serie']
   access_password varchar(150) [null]
   notes text [null]
@@ -195,22 +205,39 @@ Table ticket_photos {
 // 6. SERVICIOS (CATÁLOGO)
 // ================================================
 
+// Catálogo de servicios
 Table services {
   id int [pk, increment]
   name varchar(150)
   description text [null]
-  base_price decimal(12,2)
   is_active boolean [default: true]
   created_at datetime
   updated_at datetime
   deleted_at datetime [null]
 }
 
+// Precios por ubicación (workshop vs home)
+Table service_prices {
+  id int [pk, increment]
+  service_id int
+  location_type varchar(20) [note: 'workshop, home']
+  price decimal(12,2)
+  created_at datetime
+  updated_at datetime
+}
+
+// Servicios aplicados a tickets
 Table ticket_services {
   id int [pk, increment]
   ticket_id int
-  service_id int
-  price decimal(12,2)
+  service_id int [null, note: 'null si es servicio único temporal']
+  custom_service_name varchar(150) [null, note: 'solo si service_id es null']
+  location_type varchar(20) [note: 'workshop, home - para saber qué precio aplicar']
+  price decimal(12,2) [note: 'precio final cobrado']
+  discount_type varchar(10) [null, note: 'percentage, fixed']
+  discount_value decimal(12,2) [default: 0]
+  discount_amount decimal(12,2) [default: 0, note: 'monto descontado']
+  discount_note text [null, note: 'nota interna para auditoría - solo visible para admins']
   notes text [null]
   created_at datetime
   updated_at datetime
@@ -227,6 +254,9 @@ Table products {
   description text [null]
   sku varchar(100) [null, note: 'código interno']
   barcode varchar(100) [null, note: 'código de barras']
+  price_bs decimal(12,2) [note: 'precio unitario en Bs - SIEMPRE igual']
+  price_usd decimal(12,2) [note: 'precio unitario en USD - SIEMPRE igual']
+  has_variants boolean [default: false, note: 'si tiene variantes (color, etc.)']
   has_inventory boolean [default: true, note: 'si maneja stock o no (servicios)']
   is_active boolean [default: true]
   created_at datetime
@@ -234,54 +264,27 @@ Table products {
   deleted_at datetime [null]
 }
 
-// Variaciones (colores, tallas, etc.)
+// Variaciones (colores, tallas, etc.) - MISMO PRECIO que el producto base
 Table product_variants {
   id int [pk, increment]
   product_id int
   name varchar(100) [note: 'Azul, Rojo, Talla M']
   sku varchar(100) [null]
   barcode varchar(100) [null]
-  price_adjustment decimal(12,2) [default: 0, note: 'ajuste al precio base']
   is_active boolean [default: true]
   created_at datetime
   updated_at datetime
   deleted_at datetime [null]
 }
 
-// Presentaciones (caja, docena, unidad)
+// Presentaciones (caja, docena, unidad) - solo define cantidad, NO el precio
 Table product_presentations {
   id int [pk, increment]
   product_id int
-  name varchar(50) [note: 'Caja, Docena, Unidad']
-  units_per_presentation int [default: 1, note: 'cuántas unidades tiene']
+  name varchar(50) [note: 'Caja, Paquete, Docena']
+  units int [default: 1, note: 'cuántas unidades contiene (4, 12, 24)']
   is_default boolean [default: false]
   created_at datetime
-  updated_at datetime
-}
-
-// Precios por volumen (descuentos por cantidad)
-Table product_price_rules {
-  id int [pk, increment]
-  product_id int [null]
-  category_id int [null, note: 'para reglas por categoría']
-  min_quantity int
-  max_quantity int [null]
-  price_type varchar(10) [note: 'fixed, percent']
-  price_value decimal(12,2)
-  currency varchar(10) [default: 'Bs']
-  is_active boolean [default: true]
-  created_at datetime
-  updated_at datetime
-}
-
-// Precios duales (Bs y USD)
-Table product_prices {
-  id int [pk, increment]
-  product_id int
-  cost_price decimal(12,2)
-  price_bs decimal(12,2)
-  price_usd decimal(12,2)
-  margin_percent decimal(5,2) [null]
   updated_at datetime
 }
 
@@ -289,10 +292,11 @@ Table product_prices {
 Table product_stocks {
   id int [pk, increment]
   product_id int
-  variant_id int [null]
-  presentation_id int [null]
+  variant_id int [null, note: 'null si no tiene variantes']
+  presentation_id int [null, note: 'null si no tiene presentaciones']
   quantity int [default: 0]
   min_stock_alert int [default: 0, note: 'alerta cuando baje de este número']
+  location varchar(50) [null, note: 'taller, bodega, etc.']
   updated_at datetime
 }
 
@@ -490,6 +494,7 @@ Ref: bcv_rates.recorded_by > users.id
 
 // Catálogos
 Ref: devices.client_id > clients.id
+Ref: devices.device_type_id > device_types.id
 Ref: devices.brand_id > brands.id
 Ref: categories.parent_id > categories.id
 
@@ -507,6 +512,8 @@ Ref: ticket_status_logs.user_id > users.id
 
 Ref: ticket_photos.ticket_id > service_tickets.id
 
+Ref: service_prices.service_id > services.id
+
 Ref: ticket_services.ticket_id > service_tickets.id
 Ref: ticket_services.service_id > services.id
 
@@ -514,9 +521,6 @@ Ref: ticket_services.service_id > services.id
 Ref: products.category_id > categories.id
 Ref: product_variants.product_id > products.id
 Ref: product_presentations.product_id > products.id
-Ref: product_price_rules.product_id > products.id
-Ref: product_price_rules.category_id > categories.id
-Ref: product_prices.product_id > products.id
 Ref: product_stocks.product_id > products.id
 Ref: product_stocks.variant_id > product_variants.id
 Ref: product_stocks.presentation_id > product_presentations.id
@@ -568,19 +572,21 @@ Ref: media.model_id > users.id
 // 4. clients, devices
 
 // Fase 3: Inventario
-// 5. products, product_variants, product_presentations, product_price_rules, product_prices, product_stocks
+// 5. products, product_variants, product_presentations, product_stocks
+// 5b. device_types
 // 6. combos, combo_items
 // 7. services
 
 // Fase 4: Taller
-// 8. service_tickets, ticket_status_logs, ticket_photos, ticket_services
+// 8. services, service_prices, workshop_statuses
+// 9. service_tickets, ticket_status_logs, ticket_photos, ticket_services
 
 // Fase 5: Ventas
-// 9. sales, sale_items, sale_payments
+// 10. sales, sale_items, sale_payments
 
 // Fase 6: Sistema
-// 10. purchase_requests, purchase_request_items
-// 11. notifications, notification_logs
-// 12. activity_logs
-// 13. settings
-// 14. media
+// 11. purchase_requests, purchase_request_items
+// 12. notifications, notification_logs
+// 13. activity_logs
+// 14. settings
+// 15. media
