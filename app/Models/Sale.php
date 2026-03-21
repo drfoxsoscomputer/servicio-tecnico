@@ -7,10 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Services\SaleCalculationService;
 
 class Sale extends Model
 {
     use SoftDeletes;
+
+    protected static ?SaleCalculationService $calculationService = null;
+
+    public static function getCalculationService(): SaleCalculationService
+    {
+        return self::$calculationService ??= new SaleCalculationService();
+    }
 
     protected $fillable = [
         'client_id',
@@ -84,5 +92,60 @@ class Sale extends Model
         $doc = $this->client->document_id ?? 'N/A';
 
         return "Nota #{$this->id} - {$client} {$doc} - ({$this->status})";
+    }
+
+    public function getSubtotalAttribute(): float
+    {
+        return $this->getCalculationService()->calculateNetAmount($this);
+    }
+
+    public function getDiscountAmountAttribute(): float
+    {
+        return $this->getCalculationService()->calculateDiscountAmount($this, $this->subtotal);
+    }
+
+    public function getTaxableAmountAttribute(): float
+    {
+        return $this->subtotal - $this->discount_amount;
+    }
+
+    public function getTaxAmountAttribute(): float
+    {
+        return $this->getCalculationService()->calculateTaxAmount($this, $this->taxable_amount);
+    }
+
+    public function getTotalAmountAttribute(): float
+    {
+        return $this->taxable_amount + $this->tax_amount;
+    }
+
+    public function getPaidAmountAttribute(): float
+    {
+        return $this->payments->sum('amount');
+    }
+
+    public function getPendingAmountAttribute(): float
+    {
+        return max(0, $this->total_amount - $this->paid_amount);
+    }
+
+    public function getSaleStatusAttribute(): string
+    {
+        if ($this->paid_amount >= $this->total_amount && $this->total_amount > 0) {
+            return 'paid';
+        }
+
+        if ($this->paid_amount > 0) {
+            return 'partial';
+        }
+
+        return $this->status ?? 'pending';
+    }
+
+    // ===== METHODS =====
+
+    public function recalculateTotals(): void
+    {
+        $this->getCalculationService()->recalculateSale($this);
     }
 }

@@ -6,6 +6,7 @@ use App\Filament\Resources\Sales\Pages\CreateSale;
 use App\Filament\Resources\Sales\Pages\EditSale;
 use App\Filament\Resources\Sales\Pages\ListSales;
 use App\Filament\Resources\Sales\Pages\ViewSale;
+use App\Filament\Resources\Sales\RelationManagers\ItemsRelationManager;
 use App\Filament\Resources\Sales\Schemas\SaleForm;
 use App\Filament\Resources\Sales\Schemas\SaleInfolist;
 use App\Filament\Resources\Sales\Tables\SalesTable;
@@ -48,7 +49,7 @@ class SaleResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ItemsRelationManager::class,
         ];
     }
 

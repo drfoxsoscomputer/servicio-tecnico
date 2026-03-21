@@ -6,25 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('product_images', function (Blueprint $table) {
+        Schema::create('ticket_photos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('ticket_id')->constrained('service_tickets')->onDelete('cascade');
+            $table->string('type', 20)->default('before')->comment('before, during, after');
             $table->string('path', 255);
-            $table->unsignedInteger('position')->default(0);
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('product_images');
+        Schema::dropIfExists('ticket_photos');
     }
 };

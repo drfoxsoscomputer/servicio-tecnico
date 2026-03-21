@@ -3,22 +3,21 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
-        $this->command->call('shield:generate', ['--all' => true, '--ignore-existing-policies' => true]);
+        // Crear roles
+        Role::create(['name' => 'super_admin', 'guard_name' => 'web']);
+        Role::create(['name' => 'admin', 'guard_name' => 'web']);
+        Role::create(['name' => 'tecnico', 'guard_name' => 'web']);
+        Role::create(['name' => 'recepcionista', 'guard_name' => 'web']);
+        Role::create(['name' => 'cajero', 'guard_name' => 'web']);
 
+        // Crear usuario admin
         $user = User::create([
             'name' => 'Administrador',
             'email' => 'admin@admin.com',
@@ -27,12 +26,15 @@ class DatabaseSeeder extends Seeder
 
         $user->assignRole('super_admin');
 
-        Role::Create(['name' => 'admin']);
-        Role::Create(['name' => 'technician']);
-        Role::Create(['name' => 'cashier']);
-
+        // Seeders de datos base
         $this->call([
-            StatusSeeder::class,
+            WorkshopStatusSeeder::class,
+            PaymentMethodSeeder::class,
+            ServiceSeeder::class,
+            SettingsSeeder::class,
         ]);
+
+        // Generar permisos de Shield
+        // $this->command->call('shield:generate', ['--all' => true, '--ignore-existing-policies' => true]);
     }
 }

@@ -80,7 +80,9 @@ class SalesTable
                     ->colors([
                         'gray' => 'draft',
                         'warning' => 'pending',
+                        'info' => 'partial',
                         'success' => 'paid',
+                        'primary' => 'completed',
                         'danger' => 'cancelled',
                     ])
                     ->sortable(),

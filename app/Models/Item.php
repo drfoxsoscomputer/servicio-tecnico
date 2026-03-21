@@ -26,4 +26,11 @@ class Item extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    // ===== ACCESSORS =====
+
+    public function getSubtotalAttribute(): float
+    {
+        return (float) $this->quantity * (float) $this->unit_price;
+    }
 }
