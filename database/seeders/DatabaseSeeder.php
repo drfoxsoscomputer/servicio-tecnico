@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
 
         // Crear usuario admin
         $user = User::create([
-            'name' => 'Administrador',
+            'name' => 'Super Administrador',
             'email' => 'admin@admin.com',
             'password' => bcrypt('asdf1234'),
         ]);
@@ -27,14 +27,14 @@ class DatabaseSeeder extends Seeder
         $user->assignRole('super_admin');
 
         // Seeders de datos base
-        $this->call([
-            WorkshopStatusSeeder::class,
-            PaymentMethodSeeder::class,
-            ServiceSeeder::class,
-            SettingsSeeder::class,
-        ]);
+        // $this->call([
+        //     WorkshopStatusSeeder::class,
+        //     PaymentMethodSeeder::class,
+        //     ServiceSeeder::class,
+        //     SettingsSeeder::class,
+        // ]);
 
         // Generar permisos de Shield
-        // $this->command->call('shield:generate', ['--all' => true, '--ignore-existing-policies' => true]);
+        $this->command->call('shield:generate', ['--all' => true, '--ignore-existing-policies' => true]);
     }
 }
