@@ -24,10 +24,17 @@ class SaleForm
     {
         return $schema
             ->components([
-                TextInput::make('invoice_number')
-                    ->label('Número de factura')
-                    ->placeholder('FAC-2026-0001')
+                TextInput::make('document_number')
+                    ->label('Número de documento')
+                    ->placeholder('NTE-2026-0001')
                     ->maxLength(20),
+                Select::make('sale_type')
+                    ->label('Tipo de documento')
+                    ->options([
+                        'sale' => 'Nota de Entrega (Venta)',
+                        'quote' => 'Cotización',
+                    ])
+                    ->default('sale'),
                 Tabs::make('Datos de la Venta')
                     ->tabs([
                         Tab::make('Cliente')

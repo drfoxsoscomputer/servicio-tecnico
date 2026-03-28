@@ -23,11 +23,12 @@ class Sale extends Model
     }
 
     protected $fillable = [
-        'invoice_number',
+        'document_number',
         'ticket_id',
         'client_id',
         'user_id',
         'type',
+        'sale_type',
         'subtotal',
         'discount_type',
         'discount_value',
@@ -103,7 +104,7 @@ class Sale extends Model
 
     public function getTitleAttribute(): string
     {
-        return "Factura #{$this->invoice_number}";
+        return "Documento #{$this->document_number}";
     }
 
     public function getPaidAmountAttribute(): float

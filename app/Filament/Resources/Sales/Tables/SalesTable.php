@@ -20,9 +20,17 @@ class SalesTable
     {
         return $table
             ->columns([
-                TextColumn::make('invoice_number')
-                    ->label('Factura')
+                TextColumn::make('document_number')
+                    ->label('Documento')
                     ->searchable()
+                    ->sortable(),
+                TextColumn::make('sale_type')
+                    ->label('Tipo')
+                    ->badge()
+                    ->colors([
+                        'success' => 'sale',
+                        'warning' => 'quote',
+                    ])
                     ->sortable(),
                 TextColumn::make('client.name')
                     ->label('Cliente')
@@ -31,7 +39,7 @@ class SalesTable
                     ->label('Cajero')
                     ->searchable(),
                 TextColumn::make('type')
-                    ->label('Tipo')
+                    ->label('Origen')
                     ->badge()
                     ->colors([
                         'success' => 'pos',
@@ -69,11 +77,17 @@ class SalesTable
                     ->sortable(),
             ])
             ->filters([
+                SelectFilter::make('sale_type')
+                    ->label('Tipo')
+                    ->options([
+                        'sale' => 'Nota de Entrega',
+                        'quote' => 'Cotización',
+                    ]),
                 SelectFilter::make('status')
                     ->label('Estado')
                     ->options(SaleStatus::class),
                 SelectFilter::make('type')
-                    ->label('Tipo')
+                    ->label('Origen')
                     ->options([
                         'pos' => 'Punto de Venta',
                         'workshop' => 'Taller',
