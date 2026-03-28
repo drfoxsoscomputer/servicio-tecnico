@@ -10,17 +10,24 @@ return new class extends Migration
     {
         Schema::create('sale_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('sale_id')->constrained('sales')->onDelete('cascade');
-            $table->string('item_type', 20)->comment('product, service, combo');
-            $table->foreignId('product_id')->nullable()->constrained('products')->onDelete('restrict');
-            $table->foreignId('variant_id')->nullable()->constrained('product_variants')->onDelete('set null');
-            $table->foreignId('service_id')->nullable()->constrained('services')->onDelete('set null');
-            $table->foreignId('presentation_id')->nullable()->constrained('product_presentations')->onDelete('set null');
-            $table->string('serial_number', 100)->nullable()->comment('Serial del producto vendido');
+            $table->foreignId('sale_id')->constrained()->cascadeOnDelete();
+            $table->string('item_type', 20); // product, service, combo
+            $table->unsignedBigInteger('product_id')->nullable();
+            $table->unsignedBigInteger('variant_id')->nullable();
+            $table->unsignedBigInteger('service_id')->nullable();
+            $table->unsignedBigInteger('combo_id')->nullable();
+            $table->unsignedBigInteger('presentation_id')->nullable();
+            $table->string('serial_number', 100)->nullable();
             $table->integer('quantity')->default(1);
             $table->decimal('unit_price', 12, 2);
             $table->decimal('subtotal', 12, 2);
             $table->timestamps();
+
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('restrict');
+            $table->foreign('variant_id')->references('id')->on('product_variants')->onDelete('set null');
+            $table->foreign('service_id')->references('id')->on('services')->onDelete('set null');
+            $table->foreign('combo_id')->references('id')->on('combos')->onDelete('set null');
+            $table->foreign('presentation_id')->references('id')->on('product_presentations')->onDelete('set null');
         });
     }
 

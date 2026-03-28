@@ -7,6 +7,7 @@ use App\Filament\Resources\Sales\Pages\EditSale;
 use App\Filament\Resources\Sales\Pages\ListSales;
 use App\Filament\Resources\Sales\Pages\ViewSale;
 use App\Filament\Resources\Sales\RelationManagers\ItemsRelationManager;
+use App\Filament\Resources\Sales\RelationManagers\SalePaymentRelationManager;
 use App\Filament\Resources\Sales\Schemas\SaleForm;
 use App\Filament\Resources\Sales\Schemas\SaleInfolist;
 use App\Filament\Resources\Sales\Tables\SalesTable;
@@ -18,18 +19,19 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use UnitEnum;
 
 class SaleResource extends Resource
 {
     protected static ?string $model = Sale::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShoppingCart;
 
     protected static ?string $recordTitleAttribute = 'title';
 
     protected static ?string $modelLabel = 'venta';
 
-    protected static string |\UnitEnum|null $navigationGroup = 'Ventas';
+    protected static string|UnitEnum|null $navigationGroup = 'Ventas';
 
     public static function form(Schema $schema): Schema
     {
@@ -50,6 +52,7 @@ class SaleResource extends Resource
     {
         return [
             ItemsRelationManager::class,
+            SalePaymentRelationManager::class,
         ];
     }
 

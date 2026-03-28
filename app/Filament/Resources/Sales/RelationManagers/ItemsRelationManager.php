@@ -29,12 +29,20 @@ class ItemsRelationManager extends RelationManager
     {
         return $schema
             ->components([
+                Select::make('item_type')
+                    ->label('Tipo')
+                    ->options([
+                        'product' => 'Producto',
+                        'service' => 'Servicio',
+                        'combo' => 'Combo',
+                    ])
+                    ->default('product')
+                    ->required(),
                 Select::make('product_id')
                     ->label('Producto')
                     ->relationship('product', 'name', modifyQueryUsing: fn($query) => $query->active())
                     ->searchable(['name', 'sku', 'barcode'])
                     ->preload()
-                    ->required()
                     ->live()
                     ->afterStateUpdated(function (Get $get, Set $set, $state) {
                         if ($state) {
@@ -44,6 +52,16 @@ class ItemsRelationManager extends RelationManager
                             }
                         }
                     }),
+                Select::make('variant_id')
+                    ->label('Variante')
+                    ->relationship('variant', 'name')
+                    ->preload()
+                    ->searchable(),
+                Select::make('presentation_id')
+                    ->label('Presentación')
+                    ->relationship('presentation', 'name')
+                    ->preload()
+                    ->searchable(),
                 TextInput::make('quantity')
                     ->label('Cantidad')
                     ->numeric()
@@ -56,6 +74,9 @@ class ItemsRelationManager extends RelationManager
                     ->stripCharacters(',')
                     ->numeric()
                     ->required(),
+                TextInput::make('serial_number')
+                    ->label('Número de serie')
+                    ->maxLength(100),
             ]);
     }
 
@@ -63,7 +84,10 @@ class ItemsRelationManager extends RelationManager
     {
         return $schema
             ->components([
+                TextEntry::make('item_type')->label('Tipo'),
                 TextEntry::make('product.name')->label('Producto'),
+                TextEntry::make('variant.name')->label('Variante'),
+                TextEntry::make('presentation.name')->label('Presentación'),
                 TextEntry::make('quantity')->label('Cantidad'),
                 TextEntry::make('unit_price')->label('Precio Unitario')->money('USD'),
                 TextEntry::make('subtotal')->label('Subtotal')->money('USD'),
@@ -78,6 +102,12 @@ class ItemsRelationManager extends RelationManager
                 TextColumn::make('product.name')
                     ->label('Producto')
                     ->searchable()
+                    ->sortable(),
+                TextColumn::make('variant.name')
+                    ->label('Variante')
+                    ->sortable(),
+                TextColumn::make('presentation.name')
+                    ->label('Presentación')
                     ->sortable(),
                 TextColumn::make('quantity')
                     ->label('Cantidad')

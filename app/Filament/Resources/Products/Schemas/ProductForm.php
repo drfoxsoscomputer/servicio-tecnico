@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\Products\Schemas;
 
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -77,22 +75,6 @@ class ProductForm
                     ->onIcon(Heroicon::Check)
                     ->offIcon(Heroicon::XMark)
                     ->default(true),
-                Repeater::make('images')
-                    ->label('Imágenes')
-                    ->helperText('La primera imagen será la principal.')
-                    ->relationship('images')
-                    ->orderColumn('position')
-                    ->defaultItems(0)
-                    ->reorderable()
-                    ->collapsible()
-                    ->schema([
-                        FileUpload::make('path')
-                            ->label('Imágen')
-                            ->image()
-                            ->directory('products'),
-                    ])
-                    ->columnSpanFull()
-                    ->addActionLabel('+'),
             ]);
     }
 }

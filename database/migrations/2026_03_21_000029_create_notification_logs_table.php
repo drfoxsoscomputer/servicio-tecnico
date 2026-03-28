@@ -10,9 +10,9 @@ return new class extends Migration
     {
         Schema::create('notification_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('notification_id')->constrained('notifications')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('action', 20)->comment('sent, opened, clicked');
+            $table->foreignId('notification_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('action', 20); // sent, opened, clicked
             $table->timestamp('created_at');
         });
     }

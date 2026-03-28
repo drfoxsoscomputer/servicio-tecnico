@@ -10,16 +10,13 @@ return new class extends Migration
     {
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
-            $table->string('type', 50)->comment('new_ticket, diagnosis_ready, approved, etc.');
+            $table->string('type', 50); // new_ticket, diagnosis_ready, approved, etc.
             $table->string('title', 200);
             $table->text('body');
-            $table->json('data')->nullable()->comment('Datos adicionales');
-            $table->foreignId('recipient_id')->constrained('users')->onDelete('cascade');
+            $table->json('data')->nullable();
+            $table->foreignId('recipient_id')->constrained('users')->cascadeOnDelete();
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
-            
-            $table->index('recipient_id');
-            $table->index('read_at');
         });
     }
 

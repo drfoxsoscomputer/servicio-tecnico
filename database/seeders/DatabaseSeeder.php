@@ -27,12 +27,12 @@ class DatabaseSeeder extends Seeder
         $user->assignRole('super_admin');
 
         // Seeders de datos base
-        // $this->call([
-        //     WorkshopStatusSeeder::class,
-        //     PaymentMethodSeeder::class,
-        //     ServiceSeeder::class,
-        //     SettingsSeeder::class,
-        // ]);
+        $this->call([
+            // WorkshopStatusSeeder::class,
+            // PaymentMethodSeeder::class,
+            // ServiceSeeder::class,
+            SettingsSeeder::class,
+        ]);
 
         // Generar permisos de Shield
         $this->command->call('shield:generate', ['--all' => true, '--ignore-existing-policies' => true]);

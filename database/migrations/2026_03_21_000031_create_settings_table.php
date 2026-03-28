@@ -11,13 +11,11 @@ return new class extends Migration
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
             $table->string('key', 100)->unique();
-            $table->text('value')->nullable();
-            $table->string('type', 20)->default('string')->comment('string, boolean, number, json');
+            $table->text('value');
+            $table->string('type', 20)->default('string'); // string, boolean, number, json
             $table->string('group', 50)->default('general');
             $table->text('description')->nullable();
             $table->timestamps();
-            
-            $table->index('group');
         });
     }
 

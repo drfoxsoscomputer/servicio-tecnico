@@ -328,16 +328,21 @@ Table combo_items {
 }
 
 // ================================================
-// 9. VENTAS / POS
+// 9. VENTAS / POS / COTIZACIONES
+// ================================================
+// Sale Types:
+// - sale: Venta concretada (Nota de Entrega), descuenta inventario
+// - quote: Cotización, NO descuenta inventario
 // ================================================
 
 Table sales {
   id int [pk, increment]
-  invoice_number varchar(20) [unique, note: 'ej: FAC-2026-0001']
+  document_number varchar(20) [unique, note: 'ej: NTE-2026-0001 o COT-2026-0001']
   ticket_id int [null, note: 'si viene de un ticket']
   client_id int [null]
   user_id int
   type varchar(20) [note: 'pos, workshop']
+  sale_type varchar(20) [default: 'sale', note: 'sale, quote']
   subtotal decimal(12,2)
   discount_type varchar(10) [null, note: 'none, percent, amount']
   discount_value decimal(12,2) [default: 0]
@@ -345,7 +350,7 @@ Table sales {
   total_bs decimal(12,2)
   total_usd decimal(12,2)
   exchange_rate decimal(12,2) [note: 'tasa BCV usada']
-  status varchar(20) [default: 'completed']
+  status varchar(20) [default: 'completed', note: 'completed, pending, cancelled']
   notes text [null]
   created_at datetime
   updated_at datetime

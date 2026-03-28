@@ -2,11 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Service extends Model
@@ -14,83 +11,31 @@ class Service extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'device_id',
-        'status_id',
-        'received_by',
-        'technician_id',
-        'closed_by',
-        'problem_reported',
-        'diagnosis',
-        'title',
-        'work_done',
-        'price_service',
-        'delivered_at',
+        'name',
+        'description',
+        'is_active',
     ];
 
     protected $casts = [
-        'delivered_at' => 'datetime',
+        'is_active' => 'boolean',
     ];
-
 
     // ===== RELACIONES =====
 
-    public function device(): BelongsTo
+    public function prices(): HasMany
     {
-        return $this->belongsTo(Device::class);
+        return $this->hasMany(ServicePrice::class);
     }
 
-    public function status(): BelongsTo
+    public function ticketServices(): HasMany
     {
-        return $this->belongsTo(Status::class);
+        return $this->hasMany(TicketService::class);
     }
 
-    public function receivedBy(): BelongsTo
+    // ===== SCOPES =====
+
+    public function scopeActive($query)
     {
-        return $this->belongsTo(User::class, 'received_by');
-    }
-
-    public function technician(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'technician_id');
-    }
-
-    public function closedBy(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'closed_by');
-    }
-
-    public function logs(): HasMany
-    {
-        return $this->hasMany(ServiceLog::class);
-    }
-
-    public function photos(): HasMany
-    {
-        return $this->hasMany(ServicePhoto::class);
-    }
-
-    public function parts(): HasMany
-    {
-        return $this->hasMany(Part::class);
-    }
-
-    public function sale(): HasOne
-    {
-        return $this->hasOne(Sale::class);
-    }
-
-        // ===== SCOPES =====
-
-    public function scopeNotDeleted(Builder $query): Builder
-    {
-        return $query->whereNull('deleted_at');
-    }
-
-    // ===== ACCESSORS =====
-
-    public function getTitleAttribute(): string
-    {
-        $status = $this->status->name ?? 'N/A';
-        return "#{$this->id} - {$this->attributes['title']} ({$status})";
+        return $query->where('is_active', true);
     }
 }
