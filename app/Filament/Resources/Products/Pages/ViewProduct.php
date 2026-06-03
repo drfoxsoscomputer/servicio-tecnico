@@ -16,9 +16,4 @@ class ViewProduct extends ViewRecord
             EditAction::make(),
         ];
     }
-
-    public function getHeading(): string
-    {
-        return $this->record->name;
-    }
 }

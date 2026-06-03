@@ -18,6 +18,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+
 // use UnitEnum;
 
 class UserResource extends Resource
@@ -26,7 +27,7 @@ class UserResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Seguridad';
+    protected static string|\UnitEnum|null $navigationGroup = 'Seguridad';
 
     protected static ?string $recordTitleAttribute = 'title';
 
@@ -34,13 +35,15 @@ class UserResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        $query = parent::getEloquentQuery();
+        $query = parent::getEloquentQuery()
+            ->with('roles:id,name');
         $authUser = Filament::auth()->user();
-        if ($authUser instanceof User && !$authUser->hasRole('super_admin')) {
+        if ($authUser instanceof User && ! $authUser->hasRole('super_admin')) {
             $query->whereDoesntHave('roles', function (Builder $q) {
                 $q->where('name', 'super_admin');
             });
         }
+
         return $query;
     }
 

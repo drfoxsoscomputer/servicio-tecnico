@@ -10,15 +10,19 @@ class ProductPresentation extends Model
 {
     protected $fillable = [
         'product_id',
-        'name',
+        'code',
+        'description',
         'units',
-        'is_default',
     ];
 
     protected $casts = [
         'units' => 'integer',
-        'is_default' => 'boolean',
     ];
+
+    public function setCodeAttribute($value): void
+    {
+        $this->attributes['code'] = strtoupper($value);
+    }
 
     public function product(): BelongsTo
     {

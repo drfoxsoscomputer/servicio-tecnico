@@ -16,11 +16,9 @@ class Product extends Model
         'category_id',
         'name',
         'description',
-        'sku',
         'barcode',
         'price_bs',
         'price_usd',
-        'has_variants',
         'has_inventory',
         'is_active',
     ];
@@ -28,7 +26,6 @@ class Product extends Model
     protected $casts = [
         'price_bs' => 'decimal:2',
         'price_usd' => 'decimal:2',
-        'has_variants' => 'boolean',
         'has_inventory' => 'boolean',
         'is_active' => 'boolean',
     ];
@@ -62,8 +59,8 @@ class Product extends Model
         return $query->where('is_active', true);
     }
 
-    public function scopeByBrand(Builder $query, $brandId): Builder
+    public function scopeWithStock(Builder $query): Builder
     {
-        return $query->where('category_id', $brandId);
+        return $query->where('has_inventory', true);
     }
 }

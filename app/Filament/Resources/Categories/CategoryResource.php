@@ -9,43 +9,46 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\ColorColumn;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
-// use UnitEnum;
 
 class CategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static ?string $modelLabel = 'categoría';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Configuración';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSquares2x2;
 
     protected static ?string $recordTitleAttribute = 'name';
-
-    protected static ?string $modelLabel = 'categoría';
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->label('Categoría')
-                    ->placeholder('Ej. Accesorios, Componentes, Servicios, Consumibles')
+                    ->label('Nombre')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(100)
+                    ->placeholder('Ej: Cables, Pantallas, Baterías'),
+                ColorPicker::make('color')
+                    ->label('Color')
+                    ->hex()
+                    ->hexColor(),
                 Toggle::make('is_active')
                     ->label('Activo')
-                    ->inline(false)
                     ->onIcon(Heroicon::Check)
                     ->offIcon(Heroicon::XMark)
+                    ->onColor('success')
+                    ->offColor('danger')
                     ->default(true),
             ]);
     }
@@ -59,26 +62,22 @@ class CategoryResource extends Resource
                     ->label('Nombre')
                     ->searchable()
                     ->sortable(),
+                ColorColumn::make('color')
+                    ->label('Color'),
                 IconColumn::make('is_active')
                     ->label('Activo')
                     ->boolean(),
                 TextColumn::make('created_at')
-                    ->label('Creado el')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
-                    ->label('Actualizado el')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                TernaryFilter::make('is_active')
-                    ->label('Estado')
-                    ->trueLabel('Solo activos')
-                    ->falseLabel('Solo inactivos')
-                    ->placeholder('Todos'),
+                //
             ])
             ->recordActions([
                 EditAction::make(),

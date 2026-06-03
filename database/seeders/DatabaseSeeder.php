@@ -28,10 +28,8 @@ class DatabaseSeeder extends Seeder
 
         // Seeders de datos base
         $this->call([
-            // WorkshopStatusSeeder::class,
-            // PaymentMethodSeeder::class,
-            // ServiceSeeder::class,
-            SettingsSeeder::class,
+            CategorySeeder::class,
+            StockLocationSeeder::class,
         ]);
 
         // Generar permisos de Shield

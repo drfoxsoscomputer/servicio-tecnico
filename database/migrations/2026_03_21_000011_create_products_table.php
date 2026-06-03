@@ -13,16 +13,14 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained()->cascadeOnDelete();
             $table->string('name', 150);
             $table->text('description')->nullable();
-            $table->string('sku', 100)->nullable()->unique();
             $table->string('barcode', 100)->nullable()->unique();
-            $table->decimal('price_bs', 12, 2); // Precio unitario en Bs
-            $table->decimal('price_usd', 12, 2); // Precio unitario en USD
-            $table->boolean('has_variants')->default(false); // Si tiene variantes (color, etc.)
-            $table->boolean('has_inventory')->default(true); // Si maneja stock
+            $table->decimal('price_bs', 12, 2);
+            $table->decimal('price_usd', 12, 2);
+            $table->boolean('has_inventory')->default(true);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
-            
+
             $table->index('name');
         });
     }

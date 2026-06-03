@@ -123,6 +123,13 @@ return [
             'handler' => NullHandler::class,
         ],
 
+        'performance' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/performance.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'replace_placeholders' => true,
+        ],
+
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],

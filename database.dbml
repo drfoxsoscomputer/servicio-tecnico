@@ -1,10 +1,10 @@
 // ================================================
 // SERVICIO TÉCNICO - ESTRUCTURA DE BASE DE DATOS
-// Actualizado: 2026-03-21 (Auditoría Fase 1)
+// Actualizado: 2026-04-07 (Variantes - Tablas Maestras)
 // ================================================
 
 // ================================================
-// 1. USUARIOS Y SEGURIDAD
+// USUARIOS Y SEGURIDAD
 // ================================================
 
 Table users {
@@ -58,7 +58,6 @@ Table personal_access_tokens {
 }
 
 // ================================================
-// 2. CATÁLOGOS (GENÉRICOS)
 // ================================================
 
 Table brands {
@@ -72,7 +71,8 @@ Table brands {
 Table categories {
   id int [pk, increment]
   name varchar(100)
-  parent_id int [null, note: 'para subcategorías']
+  icon varchar(50) [null, note: 'heroicon-o-cpu, etc.']
+  color varchar(20) [null, note: 'HEX code, ej: #FF0000']
   is_active boolean [default: true]
   created_at datetime
   updated_at datetime
@@ -89,7 +89,7 @@ Table payment_methods {
 }
 
 // ================================================
-// 3. TASA BCV (DÓLAR)
+// TASA BCV (DÓLAR)
 // ================================================
 
 Table bcv_rates {
@@ -103,7 +103,7 @@ Table bcv_rates {
 }
 
 // ================================================
-// 4. CLIENTES Y DISPOSITIVOS
+// CLIENTES Y DISPOSITIVOS
 // ================================================
 
 // Tipos de dispositivos
@@ -145,7 +145,7 @@ Table devices {
 }
 
 // ================================================
-// 5. SERVICIOS / TALLER
+// SERVICIOS / TALLER
 // ================================================
 
 // Estados del taller (workflow)
@@ -202,7 +202,7 @@ Table ticket_photos {
 }
 
 // ================================================
-// 6. SERVICIOS (CATÁLOGO)
+// SERVICIOS
 // ================================================
 
 // Catálogo de servicios
@@ -244,33 +244,73 @@ Table ticket_services {
 }
 
 // ================================================
-// 7. INVENTARIO - PRODUCTOS
+// INVENTARIO - PRODUCTOS Y VARIANTES (MAESTRAS)
 // ================================================
 
-Table products {
+// Tipos de variante (Color, Talle, Capacidad, etc.) - TABLA MAESTRA
+Table variant_types {
   id int [pk, increment]
-  category_id int
-  name varchar(150)
-  description text [null]
-  sku varchar(100) [null, note: 'código interno']
-  barcode varchar(100) [null, note: 'código de barras']
-  price_bs decimal(12,2) [note: 'precio unitario en Bs - SIEMPRE igual']
-  price_usd decimal(12,2) [note: 'precio unitario en USD - SIEMPRE igual']
-  has_variants boolean [default: false, note: 'si tiene variantes (color, etc.)']
-  has_inventory boolean [default: true, note: 'si maneja stock o no (servicios)']
+  name varchar(50) [note: 'Color, Talle, Capacidad, Memoria']
+  slug varchar(50) [unique]
+  is_active boolean [default: true]
+  created_at datetime
+  updated_at datetime
+}
+
+// Valores de variante (Negro, Blanco, M, L, 64GB) - TABLA MAESTRA
+// Estos valores se reutilizan en TODOS los productos
+Table variant_values {
+  id int [pk, increment]
+  variant_type_id int
+  name varchar(100) [note: 'Negro, Blanco, M, L, 64GB']
+  is_active boolean [default: true]
+  created_at datetime
+  updated_at datetime
+}
+
+// Define qué tipos de variante usa cada producto
+// Ej: Producto "Remera" usa tipo "Color" y tipo "Talle"
+Table product_variant_types {
+  id int [pk, increment]
+  product_id int
+  variant_type_id int
+  is_active boolean [default: true]
+  created_at datetime
+  updated_at datetime
+}
+
+// Combinaciones específicas de cada producto con su SKU propio
+// Ej: Router Negro = SKU-ROUTER-NEGRO (diferente al Celular Negro = SKU-CEL-NEGRO)
+Table product_variant_combinations {
+  id int [pk, increment]
+  product_id int
+  sku varchar(100) [note: 'SKU específico de esta combinación producto+variantes']
   is_active boolean [default: true]
   created_at datetime
   updated_at datetime
   deleted_at datetime [null]
 }
 
-// Variaciones (colores, tallas, etc.) - MISMO PRECIO que el producto base
-Table product_variants {
+// Detalle de cada combinación (qué valores de variante tiene)
+// Ej: Combinación "Router Negro" tiene variant_value_id = Negro
+Table product_variant_details {
   id int [pk, increment]
-  product_id int
-  name varchar(100) [note: 'Azul, Rojo, Talla M']
-  sku varchar(100) [null]
-  barcode varchar(100) [null]
+  combination_id int
+  variant_value_id int
+  created_at datetime
+  updated_at datetime
+}
+
+Table products {
+  id int [pk, increment]
+  category_id int
+  brand_id int [null]
+  name varchar(150)
+  description text [null]
+  barcode varchar(100) [null, note: 'código de barras del producto']
+  price_bs decimal(12,2) [note: 'precio unitario en Bs']
+  price_usd decimal(12,2) [note: 'precio unitario en USD']
+  has_inventory boolean [default: true, note: 'si maneja stock o no (servicios)']
   is_active boolean [default: true]
   created_at datetime
   updated_at datetime
@@ -281,27 +321,36 @@ Table product_variants {
 Table product_presentations {
   id int [pk, increment]
   product_id int
-  name varchar(50) [note: 'Caja, Paquete, Docena']
+  code varchar(10) [note: 'UND, CAJ, PAQ']
+  description varchar(50) [null, note: 'Unidad, Caja, Paquete']
   units int [default: 1, note: 'cuántas unidades contiene (4, 12, 24)']
-  is_default boolean [default: false]
   created_at datetime
   updated_at datetime
 }
 
-// Stock por presentación
+// Ubicaciones de stock (Vitrina, Almacén, Mostrador)
+Table stock_locations {
+  id int [pk, increment]
+  name varchar(50) [unique, note: 'Vitrina, Almacén, Mostrador']
+  description varchar(100) [null]
+  is_active boolean [default: true]
+  created_at datetime
+  updated_at datetime
+}
+
+// Stock por combinación y ubicación
 Table product_stocks {
   id int [pk, increment]
-  product_id int
-  variant_id int [null, note: 'null si no tiene variantes']
+  combination_id int [null, note: 'FK a product_variant_combinations - null si no tiene variantes']
   presentation_id int [null, note: 'null si no tiene presentaciones']
+  location_id int [note: 'FK a stock_locations']
   quantity int [default: 0]
   min_stock_alert int [default: 0, note: 'alerta cuando baje de este número']
-  location varchar(50) [null, note: 'taller, bodega, etc.']
   updated_at datetime
 }
 
 // ================================================
-// 8. COMBOS / PAQUETES
+// COMBOS / PAQUETES
 // ================================================
 
 Table combos {
@@ -328,7 +377,7 @@ Table combo_items {
 }
 
 // ================================================
-// 9. VENTAS / POS / COTIZACIONES
+// VENTAS / POS / COTIZACIONES
 // ================================================
 // Sale Types:
 // - sale: Venta concretada (Nota de Entrega), descuenta inventario
@@ -362,7 +411,7 @@ Table sale_items {
   sale_id int
   item_type varchar(20) [note: 'product, service, combo']
   product_id int [null]
-  variant_id int [null]
+  variant_combination_id int [null, note: 'FK a product_variant_combinations']
   service_id int [null]
   combo_id int [null]
   presentation_id int [null, note: 'si se vendió por caja/docena']
@@ -387,7 +436,7 @@ Table sale_payments {
 }
 
 // ================================================
-// 10. SOLICITUDES DE COMPRA
+// SOLICITUDES DE COMPRA
 // ================================================
 
 Table purchase_requests {
@@ -413,7 +462,7 @@ Table purchase_request_items {
 }
 
 // ================================================
-// 11. NOTIFICACIONES
+// NOTIFICACIONES
 // ================================================
 
 Table notifications {
@@ -437,7 +486,7 @@ Table notification_logs {
 }
 
 // ================================================
-// 12. ACTIVITY LOGS (AUDITORÍA)
+// ACTIVITY LOGS (AUDITORÍA)
 // ================================================
 
 Table activity_logs {
@@ -454,7 +503,7 @@ Table activity_logs {
 }
 
 // ================================================
-// 13. CONFIGURACIÓN
+// CONFIGURACIÓN
 // ================================================
 
 Table settings {
@@ -469,7 +518,7 @@ Table settings {
 }
 
 // ================================================
-// 14. MULTIMEDIA
+// MULTIMEDIA
 // ================================================
 
 Table media {
@@ -522,13 +571,21 @@ Ref: service_prices.service_id > services.id
 Ref: ticket_services.ticket_id > service_tickets.id
 Ref: ticket_services.service_id > services.id
 
-// Inventario
+// Inventario - Variantes (Maestras)
+Ref: variant_values.variant_type_id > variant_types.id
+Ref: product_variant_types.product_id > products.id
+Ref: product_variant_types.variant_type_id > variant_types.id
+Ref: product_variant_combinations.product_id > products.id
+Ref: product_variant_details.combination_id > product_variant_combinations.id
+Ref: product_variant_details.variant_value_id > variant_values.id
+
+// Inventario - Productos y Stock
 Ref: products.category_id > categories.id
-Ref: product_variants.product_id > products.id
+Ref: products.brand_id > brands.id
 Ref: product_presentations.product_id > products.id
-Ref: product_stocks.product_id > products.id
-Ref: product_stocks.variant_id > product_variants.id
+Ref: product_stocks.combination_id > product_variant_combinations.id
 Ref: product_stocks.presentation_id > product_presentations.id
+Ref: product_stocks.location_id > stock_locations.id
 
 // Combos
 Ref: combo_items.combo_id > combos.id
@@ -540,7 +597,7 @@ Ref: sales.user_id > users.id
 
 Ref: sale_items.sale_id > sales.id
 Ref: sale_items.product_id > products.id
-Ref: sale_items.variant_id > product_variants.id
+Ref: sale_items.variant_combination_id > product_variant_combinations.id
 Ref: sale_items.service_id > services.id
 Ref: sale_items.combo_id > combos.id
 Ref: sale_items.presentation_id > product_presentations.id
@@ -577,8 +634,10 @@ Ref: media.model_id > users.id
 // 4. clients, devices
 
 // Fase 3: Inventario
-// 5. products, product_variants, product_presentations, product_stocks
-// 5b. device_types
+// 5. variant_types, variant_values (TABLAS MAESTRAS)
+// 5b. products, product_variant_types, product_variant_combinations, product_variant_details
+// 5c. product_presentations, product_stocks
+// 5d. device_types
 // 6. combos, combo_items
 // 7. services
 

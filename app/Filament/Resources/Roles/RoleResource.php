@@ -111,7 +111,7 @@ class RoleResource extends Resource
                     ->color(fn (mixed $state): string => str($state)->contains('Global') ? 'gray' : 'primary')
                     ->label(__('filament-shield::filament-shield.column.team'))
                     ->searchable()
-                    ->visible(fn (): bool => static::shield()->isCentralApp() && Utils::isTenancyEnabled()),
+                    ->visible(false), // TODO: Habilitar cuando se implemente multi-tenant
                 TextColumn::make('permissions_count')
                     ->badge()
                     ->label(__('filament-shield::filament-shield.column.permissions'))

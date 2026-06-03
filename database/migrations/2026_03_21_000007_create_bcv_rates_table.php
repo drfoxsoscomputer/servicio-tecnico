@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('bcv_rates', function (Blueprint $table) {
             $table->id();
-            $table->decimal('rate', 12, 2);
+            $table->decimal('rate', 12, 4);
             $table->string('source', 50)->default('BCV');
             $table->unsignedBigInteger('recorded_by')->nullable();
             $table->timestamp('recorded_at');

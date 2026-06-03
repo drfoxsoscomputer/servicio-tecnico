@@ -13,7 +13,7 @@ class SaleItem extends Model
         'sale_id',
         'item_type',
         'product_id',
-        'variant_id',
+        'variant_combination_id',
         'service_id',
         'combo_id',
         'presentation_id',
@@ -41,9 +41,9 @@ class SaleItem extends Model
         return $this->belongsTo(Product::class);
     }
 
-    public function variant(): BelongsTo
+    public function variantCombination(): BelongsTo
     {
-        return $this->belongsTo(ProductVariant::class, 'variant_id');
+        return $this->belongsTo(ProductVariantCombination::class, 'variant_combination_id');
     }
 
     public function service(): BelongsTo
@@ -66,5 +66,21 @@ class SaleItem extends Model
     public function getSubtotalCalculatedAttribute(): float
     {
         return (float) $this->quantity * (float) $this->unit_price;
+    }
+
+    // Nombre para mostrar (producto + variantes)
+    public function getDisplayNameAttribute(): string
+    {
+        $name = $this->product?->name ?? 'Producto';
+
+        if ($this->variantCombination) {
+            $name .= ' - '.$this->variantCombination->display_name;
+        }
+
+        if ($this->presentation && $this->presentation_id !== $this->product?->presentations?->first()?->id) {
+            $name .= ' ('.$this->presentation->code.')';
+        }
+
+        return $name;
     }
 }

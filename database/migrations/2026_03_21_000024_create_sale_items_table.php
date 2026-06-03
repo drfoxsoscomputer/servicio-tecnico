@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignId('sale_id')->constrained()->cascadeOnDelete();
             $table->string('item_type', 20); // product, service, combo
             $table->unsignedBigInteger('product_id')->nullable();
-            $table->unsignedBigInteger('variant_id')->nullable();
+            $table->unsignedBigInteger('variant_combination_id')->nullable();
             $table->unsignedBigInteger('service_id')->nullable();
             $table->unsignedBigInteger('combo_id')->nullable();
             $table->unsignedBigInteger('presentation_id')->nullable();
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('product_id')->references('id')->on('products')->onDelete('restrict');
-            $table->foreign('variant_id')->references('id')->on('product_variants')->onDelete('set null');
+            $table->foreign('variant_combination_id')->references('id')->on('product_variant_combinations')->onDelete('set null');
             $table->foreign('service_id')->references('id')->on('services')->onDelete('set null');
             $table->foreign('combo_id')->references('id')->on('combos')->onDelete('set null');
             $table->foreign('presentation_id')->references('id')->on('product_presentations')->onDelete('set null');

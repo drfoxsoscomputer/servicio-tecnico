@@ -8,8 +8,8 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
@@ -20,45 +20,43 @@ class ProductsTable
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label('Nombre')
+                    ->label('Producto')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->weight('bold'),
+
                 TextColumn::make('category.name')
                     ->label('Categoría')
-                    ->searchable(),
-                TextColumn::make('sku')
-                    ->label('SKU')
-                    ->searchable(),
-                TextColumn::make('barcode')
-                    ->label('Código de barras')
-                    ->searchable(),
-                TextColumn::make('price_bs')
-                    ->label('Precio Bs')
-                    ->money('VES')
+                    ->badge()
+                    ->color('info')
+                    ->searchable()
                     ->sortable(),
-                TextColumn::make('price_usd')
-                    ->label('Precio USD')
-                    ->money('USD')
-                    ->sortable(),
-                IconColumn::make('has_variants')
+
+                TextColumn::make('variants_count')
                     ->label('Variantes')
-                    ->boolean(),
-                IconColumn::make('is_active')
-                    ->label('Activo')
-                    ->boolean(),
-                TextColumn::make('deleted_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->counts('variants')
+                    ->badge()
+                    ->color(fn ($state) => $state > 0 ? 'success' : 'gray'),
+
+                TextColumn::make('price_bs')
+                    ->label('Precio/Bs')
+                    ->numeric(decimalPlaces: 2, decimalSeparator: ',', thousandsSeparator: '.')
+                    ->prefix('Bs. ')
+                    ->sortable(),
+
+                TextColumn::make('price_usd')
+                    ->label('Precio/$')
+                    ->numeric(decimalPlaces: 2, decimalSeparator: ',', thousandsSeparator: '.')
+                    ->prefix('$ ')
+                    ->sortable(),
+
+                ToggleColumn::make('has_inventory')
+                    ->label('¿Inventario?'),
+
+                ToggleColumn::make('is_active')
+                    ->label('¿Activo?'),
             ])
+            ->defaultSort('created_at', 'desc')
             ->filters([
                 TrashedFilter::make(),
             ])

@@ -8,11 +8,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ProductStock extends Model
 {
     public $timestamps = false;
-    
+
     protected $table = 'product_stocks';
 
     protected $fillable = [
-        'product_id',
         'variant_id',
         'presentation_id',
         'quantity',
@@ -27,11 +26,6 @@ class ProductStock extends Model
         'updated_at' => 'datetime',
     ];
 
-    public function product(): BelongsTo
-    {
-        return $this->belongsTo(Product::class);
-    }
-
     public function variant(): BelongsTo
     {
         return $this->belongsTo(ProductVariant::class, 'variant_id');
@@ -42,6 +36,20 @@ class ProductStock extends Model
         return $this->belongsTo(ProductPresentation::class, 'presentation_id');
     }
 
+    // Accesor para obtener el producto a través de la variante
+    public function getProductAttribute(): ?Product
+    {
+        return $this->variant?->product;
+    }
+
+    // Accesor para obtener los valores de variante
+    public function getVariantValuesAttribute(): array
+    {
+        return $this->variant?->variantValues ?? [];
+    }
+
+    // ===== SCOPES =====
+
     public function scopeByLocation($query, $location)
     {
         return $query->where('location', $location);
@@ -50,6 +58,11 @@ class ProductStock extends Model
     public function scopeLowStock($query)
     {
         return $query->whereColumn('quantity', '<=', 'min_stock_alert')
-                    ->where('min_stock_alert', '>', 0);
+            ->where('min_stock_alert', '>', 0);
+    }
+
+    public function scopeHasStock($query)
+    {
+        return $query->where('quantity', '>', 0);
     }
 }
